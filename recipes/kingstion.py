@@ -141,7 +141,7 @@ def get_images_sdc_aware():
         except IndexError:
             set_info_log("End image list ")
             img = False
-    set_info_log(images)
+    set_info_log("images founded")
     return images
 
 

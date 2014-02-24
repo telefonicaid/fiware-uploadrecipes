@@ -85,7 +85,7 @@ def home(request):
             chef_puppet = Mychef(name, repo, cookbook_url)
         elif who == 'pupet':
             chef_puppet = PuppetMaster(name, repo, cookbook_url)
-        '''
+
         ##1.Descargamos el Cookbook
         set_debug_log("Antes del GET COOKBOOK")
         r = cookbook.get_cookbook(request)
@@ -109,7 +109,7 @@ def home(request):
             except Exception:
                 pass
             return r
-        '''
+
         #5.Ahora test the recipe
         recipe = version + "_install"
         hour = "".join(
@@ -123,12 +123,12 @@ def home(request):
             if r is not None:
                 try:
                     remove_all('./cookbooks/', name, who)
-                    #chef_puppet.remove_master_server(request)
+                    chef_puppet.remove_master_server(request)
                 except Exception:
                     pass
 
                 return r
-        '''
+
         r = catalog.add_catalog(request)
         if r is not None:
             set_error_log("Error adding the catalog to the SDC")
@@ -139,5 +139,5 @@ def home(request):
         remove_all('./cookbooks/', name, who)
         chef_puppet.remove_master_server(request)
         set_info_log("WELL DONE")
-        '''
+
         return final_error('final', 0, request)
