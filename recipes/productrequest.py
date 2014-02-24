@@ -39,6 +39,10 @@ class ProductRequest:
         return None
 
     def get_products(self):
+        """
+        Obtain a list of the product's name
+        @return:List od products
+        """
         my_url = "%s/%s" % (self.sdc_url, "catalog/product")
         set_info_log(my_url)
         response = get(my_url, self.header)
@@ -74,15 +78,14 @@ class ProductRequest:
         if response.status is not 200:
             error = 'error to add the product sdc ' + str(response.status)
             set_error_log(error)
-            return error
+            return error, None
         else:
             self.products.append(product)
-        return None
+        return None, product
 
-    def add_product_release(self, product_name, version):
+    def add_product_release(self, product, product_name, version):
         my_url = "%s/%s/%s/%s" % (
             self.sdc_url, "catalog/product", product_name, "release")
-        product = Product(product_name)
         product_release = ProductRelease(product, version)
         payload = product_release.to_product_xml()
         response = post(my_url, self.header2, tostring(payload))
@@ -121,7 +124,7 @@ class ProductRequest:
             if data is None:
                 return None
         return data['productRelease']['version']
-    '''
+
     def get_product_release_info(self, product_name, product_version):
         my_url = "%s/%s/%s/%s/%s" % (
             self.sdc_url, "catalog/product", product_name, "release",
@@ -136,16 +139,17 @@ class ProductRequest:
             data = json.loads(response.read())
             if data is None:
                 return None
-            product = ProductRelease(data['product']['name'], data['version'])
+            product = Product(data['product']['name'], data['description'])
             try:
                 for att in data['attributes']:
                     attribute = Attribute(att['key'], att['version'])
                     product.add_attribute(attribute)
             except Exception:
                 pass
-            set_info_log(product)
-            return product
-    '''
+            product_release = ProductRelease(product, data['version'])
+            set_info_log(product_release)
+            return product_release
+
     def get_product_info(self, product_name):
         the_url = "%s/%s/%s" % (self.sdc_url, "catalog/product", product_name)
         response = get(the_url, self.header)

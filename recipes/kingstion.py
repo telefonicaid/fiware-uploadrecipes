@@ -131,13 +131,14 @@ def get_images_sdc_aware():
     img = True
     while img:
         i += 1
+        var = ""
         try:
-            payload["images"][i]['properties']['sdc_aware']
+            var = payload["images"][i]['properties']['sdc_aware']
             image_name = payload["images"][i]['name']
             image_id = payload["images"][i]['id']
             images.append([image_name, image_id])
         except KeyError:
-            pass
+            set_warning_log("The cannot obtain the var" + var)
         except IndexError:
             set_info_log("End image list ")
             img = False

@@ -1,7 +1,6 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.template.loader import get_template, Context
-from recipes.loggers import *
 
 
 def final_error(msg, number, request):
