@@ -72,7 +72,7 @@ def home(request):
         if (ports is None) or (ports == ""):
             ports = ""
         else:
-            ports = catalog.get_attributes(ports)
+            ports = process_data(ports)
         meta = catalog.get_metadata(who, cookbook_url, ubuntu, centos,
                                     depends_string,
                                     ports, repo)
@@ -85,7 +85,7 @@ def home(request):
             chef_puppet = Mychef(name, repo, cookbook_url)
         elif who == 'pupet':
             chef_puppet = PuppetMaster(name, repo, cookbook_url)
-
+        '''
         ##1.Descargamos el Cookbook
         set_debug_log("Antes del GET COOKBOOK")
         r = cookbook.get_cookbook(request)
@@ -128,16 +128,18 @@ def home(request):
                     pass
 
                 return r
-
+        '''
         r = catalog.add_catalog(request)
         if r is not None:
+            '''
             set_error_log("Error adding the catalog to the SDC")
             remove_all('./cookbooks/', name, who)
             chef_puppet.remove_master_server(request)
-
+            '''
             return r
+        '''
         remove_all('./cookbooks/', name, who)
         chef_puppet.remove_master_server(request)
         set_info_log("WELL DONE")
-
+        '''
         return final_error('final', 0, request)

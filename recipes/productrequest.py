@@ -11,6 +11,7 @@ class ProductRequest:
         self.sdc_url = sdc_url
         self.token = get_token()
         self.products = []
+        self.header2 = {'Content-Type': 'application/xml'}
         self.header = {"Accept": "application/json"}
 
     def delete_product_release(self, product_name, version):
@@ -65,17 +66,12 @@ class ProductRequest:
             attributes = self.process_attributes(attributes)
             for att in attributes:
                 product.add_attribute(att)
-        print(3)
         metadatas = self.process_attributes(metadatas)
-        print(4)
         for meta in metadatas:
             product.add_metadata(meta)
-        print(5)
         payload = product.to_product_xml()
-        print(6)
-        response = post(my_url, self.header, tostring(payload))
+        response = post(my_url, self.header2, tostring(payload))
         if response.status is not 200:
-            print(response.read())
             error = 'error to add the product sdc ' + str(response.status)
             set_error_log(error)
             return error
@@ -89,7 +85,7 @@ class ProductRequest:
         product = Product(product_name)
         product_release = ProductRelease(product, version)
         payload = product_release.to_product_xml()
-        response = post(my_url, self.header, tostring(payload))
+        response = post(my_url, self.header2, tostring(payload))
         if response.status != 200:
             return (
                 'Error to add the product release to sdc ' + str(
@@ -125,7 +121,7 @@ class ProductRequest:
             if data is None:
                 return None
         return data['productRelease']['version']
-
+    '''
     def get_product_release_info(self, product_name, product_version):
         my_url = "%s/%s/%s/%s/%s" % (
             self.sdc_url, "catalog/product", product_name, "release",
@@ -149,7 +145,7 @@ class ProductRequest:
                 pass
             set_info_log(product)
             return product
-
+    '''
     def get_product_info(self, product_name):
         the_url = "%s/%s/%s" % (self.sdc_url, "catalog/product", product_name)
         response = get(the_url, self.header)

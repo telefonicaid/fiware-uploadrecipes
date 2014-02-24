@@ -13,16 +13,16 @@ region = str(Data.objects.get(key="openstack_region"))
 
 
 def get_payload():
-    payload = json.dumps({"auth": {"tenantName": tenant_name,
-                                   "passwordCredentials": {
-                                       "username": username,
-                                       "password": password}}})
+    payload = '{"auth":{"tenantName":"' + tenant_name + \
+              '","passwordCredentials":{"username":"' + username + \
+              '","password":"' + password + '"}}}'
     return payload
 
 
 def get_data():
     response = post(url, headers, get_payload())
     if response.status != 200:
+        set_error_log(response.read())
         return None
     return response.read()
 
@@ -132,7 +132,7 @@ def get_images_sdc_aware():
     while img:
         i += 1
         try:
-            var = payload["images"][i]['properties']['sdc_aware']
+            payload["images"][i]['properties']['sdc_aware']
             image_name = payload["images"][i]['name']
             image_id = payload["images"][i]['id']
             images.append([image_name, image_id])
