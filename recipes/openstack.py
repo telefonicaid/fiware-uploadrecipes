@@ -201,16 +201,17 @@ class OpenstackActions:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
-            if self.so == 'ubuntu':
-                ssh.connect(ip, username=self.sdc_user, password=str(
-                    Data.objects.get(key="ubuntu_password")))
-            else:
+            ssh.connect(ip, username=self.sdc_user, password=str(
+                Data.objects.get(key="ubuntu_password")))
+        except Exception:
+            try:
                 ssh.connect(ip, username=self.sdc_user, password=str(
                     Data.objects.get(key="centos_password")))
-        except Exception:
-            msg = 'Error connecting to the Chef-server for recipe execution'
-            set_error_log(msg)
-            return msg
+            except Exception:
+                msg = 'Error connecting to the Chef-server for recipe ' \
+                      'execution'
+                set_error_log(msg)
+                return msg
         stdin, stdout, stderr = ssh.exec_command('chef-client')
         stdin.flush()
         result = ''

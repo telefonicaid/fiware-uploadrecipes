@@ -9,6 +9,7 @@ from recipes.inputtest import *
 from recipes.sdccatalog import *
 from recipes.puppet import *
 from recipes.error import *
+from recipes.aaaaa import *
 
 
 def home(request):
@@ -16,6 +17,7 @@ def home(request):
     if (request.method != 'GET') and (request.method != 'POST'):
         set_error_log(request.method + ": Status -> 403. Method not allowed.")
         HttpResponseNotAllowed("Methods are GET or POST")
+
     c = {}
     c.update(csrf(request))
 
@@ -23,13 +25,13 @@ def home(request):
         set_info_log("")
         set_info_log(request.method + " request in home")
         err, dep = my_list_catalog(request)
-        #set_info_log(get_images_sdc_aware())
+        images_name = get_images_sdc_aware_name()
         if err is not None:
             set_error_log("Error listing the SDC Products")
             return dep
         template = get_template('form.html')
-        return HttpResponse(
-            template.render(RequestContext(request, {'dependslist': dep})))
+        return HttpResponse(template.render(RequestContext(request, dict(
+            dependslist=dep, so_list=images_name))))
 
     if request.method == 'POST':
         set_info_log(request.method + " request in home")
@@ -39,13 +41,13 @@ def home(request):
         desc = request.POST.get('desc')
         dependencies, depends_string = get_dependencies(request)
         meta = request.POST.get('meta')
-        sos, centos, ubuntu = get_sos(request)
-        who, chef, pupet = get_installator(request)
+        sos = get_sos(request)
+        who, chef, pupet = get_manager(request)
         svn, git, repo = get_repository(request)
         attr = request.POST.get('attr')
         ports = request.POST.get('ports')
-        err, my_error = is_error(cookbook_url, svn, git, name, version,
-                                 centos, ubuntu, chef, pupet)
+        err, my_error = is_error(cookbook_url, svn, git, name, version, sos,
+                                 chef, pupet)
         if err == 1:
             my_error = "Required Fields: " + my_error
             err, dep = my_list_catalog(request)
@@ -57,25 +59,32 @@ def home(request):
                     dep.remove(i)
                 except ValueError:
                     pass
+            images_name = get_images_sdc_aware_name()
+            for j in sos:
+                try:
+                    images_name.remove(j)
+                except ValueError:
+                    pass
             template = get_template('form.html')
             return HttpResponse(template.render(
                 RequestContext(request,
-                               dict(centos=centos, ubuntu=ubuntu, err=my_error,
-                                    name=name, git=git, svn=svn, desc=desc,
-                                    ports=ports, meta=meta, chef=chef,
-                                    pupet=pupet, attr=attr, version=version,
-                                    url=cookbook_url, dependslist=dep,
+                               dict(so_list=images_name, so_list_check=sos,
+                                    err=my_error, name=name, git=git, svn=svn,
+                                    desc=desc, ports=ports, meta=meta,
+                                    chef=chef, pupet=pupet, attr=attr,
+                                    version=version, url=cookbook_url,
+                                    dependslist=dep,
                                     mydependslist=dependencies))))
+        #En el remove para chef, borramos cliente y nodo
 
         cookbook = Download(cookbook_url, repo, name, version, who)
         catalog = Catalog(name, version, desc)
-
         if (ports is None) or (ports == ""):
             ports = ""
         else:
             ports = process_data(ports)
 
-        catalog.get_metadata(who, cookbook_url, ubuntu, centos, depends_string,
+        catalog.get_metadata(who, cookbook_url, sos, depends_string,
                              ports, repo)
 
         if attr != "":
@@ -104,6 +113,7 @@ def home(request):
                 pass
             return r
         set_debug_log("Antes del UPDATE en el server")
+        '''
         #4.Update chef_server o al puppet master
         chef_puppet.update_server(request)
         r = chef_puppet.update_master_server(request)
@@ -130,16 +140,22 @@ def home(request):
                 except Exception:
                     pass
                 return r
+        '''
         r = catalog.add_catalog(request)
         if r is not None:
             try:
                 set_error_log("Error adding the catalog to the SDC")
-                remove_all('./cookbooks/', name, who)
-                chef_puppet.remove_master_server(request)
+                #remove_all('./cookbooks/', name, who)
+                #chef_puppet.remove_master_server(request)
             except Exception:
                 pass
             return r
+
+        #Esto seria para borrarlo depsues:
+
+
+        #Hasta aqui lo que no vale
         remove_all('./cookbooks/', name, who)
-        chef_puppet.remove_master_server(request)
+        #chef_puppet.remove_master_server(request)
         set_info_log("WELL DONE")
         return final_error('final', 0, request)

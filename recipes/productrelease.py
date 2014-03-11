@@ -8,7 +8,7 @@ class Attribute:
 
 
 class Product:
-    def __init__(self, product_name, product_description=''):
+    def __init__(self, product_name, product_description):
         self.name = product_name
         self.description = product_description
         self.attributes = []

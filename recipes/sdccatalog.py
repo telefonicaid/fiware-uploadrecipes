@@ -21,7 +21,7 @@ class Catalog:
         self.attr = attr
         return attr
 
-    def get_metadata(self, manager, uri, ubuntu, centos, depend, ports, repo):
+    def get_metadata(self, manager, uri, sos, depend, ports, repo):
         meta = "installator=" + manager
         if ports == "":
             meta += ";open_ports=22     "
@@ -29,15 +29,14 @@ class Catalog:
             meta += ";open_ports=22 " + ports
         meta += ";cloud=yes"
         meta += ";repository=" + repo
+        meta += ";public=no"
         meta += ";cookbook_url=" + uri
         images = ""
-        if ubuntu is not None:
-            images = get_image("ubuntu")
-        if centos is not None:
+        for so in sos:
             if images != "":
-                images += " " + get_image("centos")
+                images += " " + get_image(so)
             else:
-                images = get_image("centos")
+                images = get_image(so)
         meta += ";image=" + images
 
         if depend is not None:

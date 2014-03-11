@@ -20,19 +20,18 @@ def get_dependencies(request):
 
 
 def get_sos(request):
-    centos = request.POST.get('centos')
-    ubuntu = request.POST.get('ubuntu')
     sos = []
-    if centos is not None:
-        centos = "checked"
-        sos.append("centos")
-    if ubuntu is not None:
-        ubuntu = "checked"
-        sos.append("ubuntu")
-    return sos, centos, ubuntu
+    try:
+        depends = dict(request.POST)['sos']
+    except Exception:
+        depends = None
+    if depends is not None:
+        for d in depends:
+            sos.append(d)
+    return sos
 
 
-def get_installator(request):
+def get_manager(request):
     who = request.POST.get('who')
     chef = None
     pupet = None
@@ -54,7 +53,7 @@ def get_repository(request):
     return svn, git, repo
 
 
-def is_error(url, svn, git, name, version, centos, ubuntu, chef, pupet):
+def is_error(url, svn, git, name, version, sos, chef, pupet):
     err = 0
     my_error = ''
     if url == '':
@@ -83,7 +82,7 @@ def is_error(url, svn, git, name, version, centos, ubuntu, chef, pupet):
         err = 1
         my_error += "Version"
 
-    if (centos is None) and (ubuntu is None):
+    if len(sos) == 0:
         if err == 1:
             my_error += ", "
         err = 1

@@ -57,7 +57,6 @@ class ProductRequest:
             for product in products:
                 var = product['name']
                 my_products.append(var)
-                Product(product['name'])
             set_info_log(my_products)
         return None, my_products
 

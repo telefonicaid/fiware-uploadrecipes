@@ -146,6 +146,31 @@ def get_images_sdc_aware():
     return images
 
 
+def get_images_sdc_aware_name():
+    images_name = []
+    data = get_images_list()
+    if data is None:
+        set_error_log("Error obtaining the image list from SDC server")
+        return None
+    payload = json.loads(data)
+    i = -1
+    img = True
+    while img:
+        i += 1
+        var = ""
+        try:
+            var = payload["images"][i]['properties']['sdc_aware']
+            image_name = payload["images"][i]['name']
+            images_name.append(str(image_name))
+        except KeyError:
+            set_warning_log("The cannot obtain the var" + var)
+        except IndexError:
+            set_info_log("End image list ")
+            img = False
+    set_info_log("images founded")
+    return images_name
+
+
 def get_image_name(img):
     return img[0]
 
@@ -155,20 +180,11 @@ def get_image_id(img):
 
 
 def get_image(name):
-    data = get_images_list()
-    set_info_log(data)
-    payload = json.loads(data)
-    i = -1
-    img = True
-    while img:
-        i += 1
-        try:
-            my_os = payload["images"][i]["properties"]["os"]
-            if my_os == name:
-                img = False
-        except KeyError:
-            pass
-    img_id = payload["images"][i]["id"]
-    set_info_log(name + ' id: ' + img_id)
-
+    images_list = get_images_sdc_aware()
+    set_info_log(images_list)
+    img_id = ""
+    for image in images_list:
+        if name == get_image_name(image):
+            img_id = get_image_id(image)
+            break
     return img_id

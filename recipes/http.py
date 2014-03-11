@@ -29,12 +29,12 @@ def delete(url, headers):
     return __do_http_req("DELETE", url, headers, None)
 
 
-def __put(url, headers):
+def put(url, headers, payload):
     """
 
     @rtype : response
     """
-    return __do_http_req("PUT", url, headers, None)
+    return __do_http_req("PUT", url, headers, payload)
 
 
 def post(url, headers, payload):
