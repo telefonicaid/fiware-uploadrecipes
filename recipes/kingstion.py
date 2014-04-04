@@ -44,6 +44,19 @@ def get_service(name):
     return e.attributes["adminURL"].value
 
 
+def get_tenant_from_token(token):
+    my_headers = {'Content-Type': "application/xml",
+                  'Accept': "application/xml",
+                  'X-Auth-Token': get_token()}
+    my_url = url + "/" + token
+    response = get(my_url, my_headers)
+    payload = parseString(response.read())
+    token = (payload.getElementsByTagName("token"))[0]
+    tenant = (token.getElementsByTagName("tenant"))[0].attributes["id"].value
+    set_info_log("Tenant: " + tenant)
+    return tenant
+
+
 def get_tenant():
     data = get_data()
     payload = parseString(data)
@@ -73,7 +86,7 @@ def get_sdc():
     set_info_log("SDC URL: " + sdc)
     return sdc
     """
-    return "http://130.206.80.119:8082/sdc/rest"
+    return "http://130.206.80.119:8087/sdc/rest"
 
 
 def get_chef_server():
@@ -114,61 +127,9 @@ def get_images_list():
     my_headers = {'Content-Type': "application/json",
                   'X-Auth-Token': get_token()}
     response = get(my_url, my_headers)
-
     if response.status is not 200:
         return None
     return response.read()
-
-
-def get_images_sdc_aware():
-    images = []
-    data = get_images_list()
-    if data is None:
-        set_error_log("Error obtaining the image list from SDC server")
-        return None
-    payload = json.loads(data)
-    i = -1
-    img = True
-    while img:
-        i += 1
-        var = ""
-        try:
-            var = payload["images"][i]['properties']['sdc_aware']
-            image_name = payload["images"][i]['name']
-            image_id = payload["images"][i]['id']
-            images.append([image_name, image_id])
-        except KeyError:
-            set_warning_log("The cannot obtain the var" + var)
-        except IndexError:
-            set_info_log("End image list ")
-            img = False
-    set_info_log("images founded")
-    return images
-
-
-def get_images_sdc_aware_name():
-    images_name = []
-    data = get_images_list()
-    if data is None:
-        set_error_log("Error obtaining the image list from SDC server")
-        return None
-    payload = json.loads(data)
-    i = -1
-    img = True
-    while img:
-        i += 1
-        var = ""
-        try:
-            var = payload["images"][i]['properties']['sdc_aware']
-            image_name = payload["images"][i]['name']
-            images_name.append(str(image_name))
-        except KeyError:
-            set_warning_log("The cannot obtain the var" + var)
-        except IndexError:
-            set_info_log("End image list ")
-            img = False
-    set_info_log("images founded")
-    return images_name
 
 
 def get_image_name(img):
@@ -179,12 +140,12 @@ def get_image_id(img):
     return img[1]
 
 
-def get_image(name):
-    images_list = get_images_sdc_aware()
+def get_image(img_id):
+    images_list = get_images_list()
     set_info_log(images_list)
-    img_id = ""
+    img_name = ""
     for image in images_list:
-        if name == get_image_name(image):
-            img_id = get_image_id(image)
+        if img_id == get_image_id(image):
+            img_name = get_image_name(image)
             break
-    return img_id
+    return img_name

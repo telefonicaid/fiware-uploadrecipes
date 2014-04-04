@@ -6,6 +6,10 @@ from django.template.loader import get_template, Context
 def final_error(msg, number, request):
     """
 
+
+    @param msg:
+    @param number:
+    @param request:
     @rtype : HttpResponse
     """
     msg1 = "1. Download the cookbook correctly"

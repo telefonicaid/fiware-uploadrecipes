@@ -1,15 +1,14 @@
 import datetime
 from django.http import HttpResponseNotAllowed
-from django.core.context_processors import csrf
-from setuptools.compat import unicode
 from recipes.download import *
-from recipes.mchef import Mychef
+from recipes.mchef import MIChef
 from recipes.openstack import OpenstackActions
-from recipes.inputtest import *
+from recipes.data_input import *
 from recipes.sdccatalog import *
-from recipes.puppet import *
+from recipes.mpuppet import MIPuppetMaster
 from recipes.error import *
-from recipes.aaaaa import *
+import xml.etree.ElementTree as TheElementTree
+#Incluir descripcion en los atributos
 
 
 def home(request):
@@ -18,84 +17,35 @@ def home(request):
         set_error_log(request.method + ": Status -> 403. Method not allowed.")
         HttpResponseNotAllowed("Methods are GET or POST")
 
-    c = {}
-    c.update(csrf(request))
-
-    if request.method == 'GET':
-        set_info_log("")
-        set_info_log(request.method + " request in home")
-        err, dep = my_list_catalog(request)
-        images_name = get_images_sdc_aware_name()
-        if err is not None:
-            set_error_log("Error listing the SDC Products")
-            return dep
-        template = get_template('form.html')
-        return HttpResponse(template.render(RequestContext(request, dict(
-            dependslist=dep, so_list=images_name))))
-
     if request.method == 'POST':
         set_info_log(request.method + " request in home")
-        name = request.POST.get('name')
-        version = request.POST.get('version')
-        cookbook_url = request.POST.get('url')
-        desc = request.POST.get('desc')
-        dependencies, depends_string = get_dependencies(request)
-        meta = request.POST.get('meta')
-        sos = get_sos(request)
-        who, chef, pupet = get_manager(request)
-        svn, git, repo = get_repository(request)
-        attr = request.POST.get('attr')
-        ports = request.POST.get('ports')
-        err, my_error = is_error(cookbook_url, svn, git, name, version, sos,
-                                 chef, pupet)
-        if err == 1:
-            my_error = "Required Fields: " + my_error
-            err, dep = my_list_catalog(request)
-            if err is not None:
-                set_error_log("Error listing the SDC Products")
-                return dep
-            for i in dependencies:
-                try:
-                    dep.remove(i)
-                except ValueError:
-                    pass
-            images_name = get_images_sdc_aware_name()
-            for j in sos:
-                try:
-                    images_name.remove(j)
-                except ValueError:
-                    pass
-            template = get_template('form.html')
-            return HttpResponse(template.render(
-                RequestContext(request,
-                               dict(so_list=images_name, so_list_check=sos,
-                                    err=my_error, name=name, git=git, svn=svn,
-                                    desc=desc, ports=ports, meta=meta,
-                                    chef=chef, pupet=pupet, attr=attr,
-                                    version=version, url=cookbook_url,
-                                    dependslist=dep,
-                                    mydependslist=dependencies))))
+        requestt = TheElementTree.parse(
+            "/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest.xml")
+        #requestt = TheElementTree.parse(
+        # "/root/xifi-uploadrecipe/recipes/xmltest.xml")
+        #requestt = TheElementTree.parse(request)
+        root = requestt.getroot()
+        name = get_name(root)
+        version = get_version(root)
+        cookbook_url = get_cookbook(root)
+        desc = get_description(root)
+        dependencies, depends_string = get_dependencies(root)
+        sos = get_sos(root)
+        who, chef_manager, pupet = get_manager(root)
+        svn, git, repo = get_repository(root)
+        ports = get_ports(root)
+        attr = get_attr(root)
+        token = get_token_request(request)
         #En el remove para chef, borramos cliente y nodo
-
         cookbook = Download(cookbook_url, repo, name, version, who)
-        catalog = Catalog(name, version, desc)
-        if (ports is None) or (ports == ""):
-            ports = ""
-        else:
-            ports = process_data(ports)
-
+        catalog = Catalog(name, version, desc, token)
         catalog.get_metadata(who, cookbook_url, sos, depends_string,
-                             ports, repo)
+                             ports, repo, token)
 
         if attr != "":
             catalog.set_attributes(attr)
-        chef_puppet = None
 
-        if who == 'chef':
-            chef_puppet = Mychef(name, repo, cookbook_url)
-        elif who == 'pupet':
-            chef_puppet = PuppetMaster(name, repo, cookbook_url)
-
+        print("Antes del DESCARGAR COOKBOOK")
         ##1.Descargamos el Cookbook
         set_debug_log("Antes del GET COOKBOOK")
         r = cookbook.get_cookbook(request)
@@ -108,54 +58,53 @@ def home(request):
         if r is not None:
             try:
                 set_error_log("Error checking the cookbook")
-                remove_all('./cookbooks/', name, who)
+                remove_all('./cookbooks/')
             except Exception:
                 pass
             return r
         set_debug_log("Antes del UPDATE en el server")
-        '''
         #4.Update chef_server o al puppet master
-        chef_puppet.update_server(request)
+        chef_puppet = None
+        if who == 'chef':
+            chef_puppet = MIChef(name, cookbook_url)
+        elif who == 'pupet':
+            chef_puppet = MIPuppetMaster(name, repo, cookbook_url)
+
         r = chef_puppet.update_master_server(request)
         if r is not None:
             try:
-                remove_all('./cookbooks/', name, who)
+                remove_all('./cookbooks/')
             except Exception:
                 pass
             return r
         #5.Ahora test the recipe
-        recipe = version + "_install"
         hour = "".join(
             "".join("".join(
-                "".join(unicode(datetime.datetime.now()).split(":")).split(
+                "".join(str(datetime.datetime.now()).split(":")).split(
                     "-")).split(" ")).split("."))
         for so in sos:
-            vm_name = so + hour
-            openest = OpenstackActions(vm_name, so, name, recipe, who)
+            vm_name = get_image(so) + hour
+            openest = OpenstackActions(vm_name, so, name, version, who,
+                                       tenant_name)
             r = openest.test(request)
             if r is not None:
                 try:
-                    remove_all('./cookbooks/', name, who)
+                    remove_all('./cookbooks/')
                     chef_puppet.remove_master_server(request)
                 except Exception:
                     pass
                 return r
-        '''
+        #6. Add the product to the SDC Catalog
         r = catalog.add_catalog(request)
         if r is not None:
             try:
                 set_error_log("Error adding the catalog to the SDC")
-                #remove_all('./cookbooks/', name, who)
-                #chef_puppet.remove_master_server(request)
+                remove_all('./cookbooks/')
+                chef_puppet.remove_master_server(request)
             except Exception:
                 pass
             return r
-
-        #Esto seria para borrarlo depsues:
-
-
-        #Hasta aqui lo que no vale
-        remove_all('./cookbooks/', name, who)
+        remove_all('./cookbooks/')
         #chef_puppet.remove_master_server(request)
         set_info_log("WELL DONE")
         return final_error('final', 0, request)

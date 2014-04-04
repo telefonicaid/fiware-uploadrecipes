@@ -1,18 +1,20 @@
 from xml.etree.ElementTree import tostring
 from recipes.productrelease import ProductRelease, Product, Attribute
-from recipes.kingstion import *
 from recipes.http import *
+from recipes.loggers import *
 import json
 
 
 class ProductRequest:
-    def __init__(self, keystone_url, sdc_url):
+    def __init__(self, keystone_url, sdc_url, token, tenant):
         self.keystone_url = keystone_url
         self.sdc_url = sdc_url
-        self.token = get_token()
+        self.token = token
         self.products = []
-        self.header2 = {'Content-Type': 'application/xml'}
-        self.header = {"Accept": "application/json"}
+        self.header2 = {'Content-Type': 'application/xml',
+                        'X-Auth-Token': token, 'Tenant-Id': tenant}
+        self.header = {"Accept": "application/json", 'X-Auth-Token': token,
+                       'Tenant-Id': tenant}
 
     def delete_product_release(self, product_name, version):
         my_url = "%s/%s/%s/%s/%s" % (
