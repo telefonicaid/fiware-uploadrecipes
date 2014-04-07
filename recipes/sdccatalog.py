@@ -19,13 +19,14 @@ class Catalog:
         self.attr = attr
         return attr
 
-    def get_metadata(self, manager, uri, sos, depend, ports, repo, token):
+    def get_metadata(self, manager, uri, sos, depend, tcp, udp, repo, token):
         meta = "installator=" + manager
-        if ports == "":
-            meta += ";open_ports=22"
+        if tcp == "":
+            meta += ";open_ports_tcp=22"
         else:
-            meta += ";open_ports=22 " + ports
+            meta += ";open_ports_tcp=22 " + tcp
         meta += ";cloud=yes"
+        meta += ";open_ports_udp=" + udp
         meta += ";repository=" + repo
         meta += ";public=no"
         meta += ";cookbook_url=" + uri

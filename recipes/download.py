@@ -51,8 +51,8 @@ class Download:
             my_version = './cookbooks/' + self.name + '/recipes/' + \
                          self.version + '_install.rb'
         else:
-            my_version = './cookbooks/' + self.name + '/manifests/' + \
-                         self.version + '_install.pp'
+            my_version = './cookbooks/' + self.name + '/manifests/install.pp'
+            print(my_version)
         if os.path.exists(my_version):
             set_info_log("Exist: " + my_version)
         else:

@@ -23,21 +23,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="kingstion.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/recipes/kingstion.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="128" column="38" selection-start="3599" selection-end="3599" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2355">
-              <folding>
-                <element signature="e#0#26#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="views.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/recipes/views.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="29" column="41" selection-start="1132" selection-end="1132" vertical-scroll-proportion="0.6702619" vertical-offset="0" max-vertical-offset="1740">
+            <state line="70" column="22" selection-start="2766" selection-end="2766" vertical-scroll-proportion="1.0174419" vertical-offset="0" max-vertical-offset="1785">
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -45,22 +34,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mchef.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/recipes/mchef.py">
+      <file leaf-file-name="mpuppet.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/recipes/mpuppet.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="26" column="32" selection-start="882" selection-end="882" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="825">
+            <state line="48" column="42" selection-start="2002" selection-end="2002" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1305">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="openstack.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/recipes/openstack.py">
+      <file leaf-file-name="download.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/recipes/download.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="65" selection-start="361" selection-end="361" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3825">
-              <folding>
-                <element signature="e#0#11#0" expanded="true" />
-              </folding>
+            <state line="68" column="34" selection-start="2479" selection-end="2479" vertical-scroll-proportion="0.0" vertical-offset="393" max-vertical-offset="1125">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="xmltest_puppet.xml" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/recipes/xmltest_puppet.xml">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="6" column="25" selection-start="247" selection-end="247" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -96,26 +92,29 @@
         <option value="$PROJECT_DIR$/tester_server/settings.py" />
         <option value="$PROJECT_DIR$/recipes/aaaaa.py" />
         <option value="$PROJECT_DIR$/recipes.log" />
-        <option value="$PROJECT_DIR$/recipes/xmltest.xml" />
         <option value="$PROJECT_DIR$/recipes/error.py" />
-        <option value="$PROJECT_DIR$/recipes/download.py" />
         <option value="$PROJECT_DIR$/recipes/apichef.py" />
         <option value="$PROJECT_DIR$/recipes/imanagement.py" />
         <option value="$PROJECT_DIR$/recipes/inputtest.py" />
         <option value="$PROJECT_DIR$/recipes/mchef.py" />
         <option value="$PROJECT_DIR$/recipes/productrequest.py" />
-        <option value="$PROJECT_DIR$/recipes/sdccatalog.py" />
         <option value="$PROJECT_DIR$/recipes/kingstion.py" />
-        <option value="$PROJECT_DIR$/recipes/openstack.py" />
         <option value="$PROJECT_DIR$/recipes/mpuppet.py" />
+        <option value="$PROJECT_DIR$/recipes/openstack.py" />
+        <option value="$PROJECT_DIR$/recipes/sdccatalog.py" />
+        <option value="$PROJECT_DIR$/recipes/data_input.py" />
+        <option value="$PROJECT_DIR$/recipes/download.py" />
+        <option value="$PROJECT_DIR$/recipes/xmltest.xml" />
         <option value="$PROJECT_DIR$/recipes/views.py" />
+        <option value="$PROJECT_DIR$/recipes/xmltest_chef.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
+    <option name="x" value="1440" />
     <option name="y" value="22" />
-    <option name="width" value="1440" />
-    <option name="height" value="793" />
+    <option name="width" value="1920" />
+    <option name="height" value="1178" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -162,6 +161,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -196,7 +196,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -411,19 +410,19 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="22" width="1440" height="793" extended-state="6" />
-    <editor active="true" />
+    <frame x="1440" y="22" width="1920" height="1178" extended-state="6" />
+    <editor active="false" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32791728" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956687" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3264402" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3264151" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960506" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.115574345" sideWeight="0.790566" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.086361244" sideWeight="0.790566" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28360415" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28301886" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -435,10 +434,10 @@
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.328125" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32791728" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3264402" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3264402" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
@@ -446,10 +445,10 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956687" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24960506" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.115574345" sideWeight="0.790566" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.086361244" sideWeight="0.790566" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2843691" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28360415" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -630,32 +629,19 @@
         <state line="108" column="40" selection-start="3551" selection-end="3551" vertical-scroll-proportion="0.0" vertical-offset="1166" max-vertical-offset="6060" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/recipes/xmltest.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="17" selection-start="62" selection-end="62" vertical-scroll-proportion="0.040983606" vertical-offset="0" max-vertical-offset="732">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/recipes/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="649">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="649" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/tests.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="2" column="0" selection-start="59" selection-end="59" vertical-scroll-proportion="0.046224963" vertical-offset="0" max-vertical-offset="649">
-          <folding />
-        </state>
+        <state line="2" column="0" selection-start="59" selection-end="59" vertical-scroll-proportion="0.046224963" vertical-offset="0" max-vertical-offset="649" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/admin.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="649">
-          <folding />
-        </state>
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="649" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/http.py">
@@ -667,77 +653,47 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/imanagement.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="12" selection-start="219" selection-end="219" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345">
-          <folding />
-        </state>
+        <state line="11" column="12" selection-start="219" selection-end="219" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="345" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/models.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="0" selection-start="494" selection-end="494" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="375">
-          <folding />
-        </state>
+        <state line="19" column="0" selection-start="494" selection-end="494" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="375" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/loggers.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="0" selection-start="228" selection-end="228" vertical-scroll-proportion="0.16178736" vertical-offset="0" max-vertical-offset="649">
-          <folding />
-        </state>
+        <state line="7" column="0" selection-start="228" selection-end="228" vertical-scroll-proportion="0.16178736" vertical-offset="0" max-vertical-offset="649" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/productrelease.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="0" selection-start="400" selection-end="400" vertical-scroll-proportion="0.2542373" vertical-offset="60" max-vertical-offset="1005">
-          <folding />
-        </state>
+        <state line="15" column="0" selection-start="400" selection-end="400" vertical-scroll-proportion="0.2542373" vertical-offset="60" max-vertical-offset="1005" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/error.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="43" selection-start="368" selection-end="368" vertical-scroll-proportion="0.052388288" vertical-offset="161" max-vertical-offset="810">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/recipes/download.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="64" column="25" selection-start="2306" selection-end="2306" vertical-scroll-proportion="0.0" vertical-offset="476" max-vertical-offset="1125">
-          <folding />
-        </state>
+        <state line="15" column="43" selection-start="368" selection-end="368" vertical-scroll-proportion="0.052388288" vertical-offset="161" max-vertical-offset="810" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/productrequest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="7" column="21" selection-start="205" selection-end="205" vertical-scroll-proportion="0.16178736" vertical-offset="0" max-vertical-offset="2685">
-          <folding>
-            <element signature="e#0#42#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/recipes/sdccatalog.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="24" selection-start="313" selection-end="313" vertical-scroll-proportion="0.27734977" vertical-offset="0" max-vertical-offset="1785">
-          <folding>
-            <element signature="e#0#27#0" expanded="true" />
-          </folding>
-        </state>
+        <state line="7" column="21" selection-start="205" selection-end="205" vertical-scroll-proportion="0.16178736" vertical-offset="0" max-vertical-offset="2685" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/kingstion.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="128" column="38" selection-start="3599" selection-end="3599" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2355">
-          <folding>
-            <element signature="e#0#26#0" expanded="true" />
-          </folding>
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/recipes/data_input.py">
+    <entry file="file://$PROJECT_DIR$/recipes/openstack.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="80" column="0" selection-start="1825" selection-end="1825" vertical-scroll-proportion="0.33281973" vertical-offset="984" max-vertical-offset="2085">
-          <folding />
+        <state line="52" column="43" selection-start="1683" selection-end="1683" vertical-scroll-proportion="0.0" vertical-offset="15" max-vertical-offset="3840">
+          <folding>
+            <element signature="e#0#11#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -748,27 +704,58 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/recipes/openstack.py">
+    <entry file="file://$PROJECT_DIR$/recipes/sdccatalog.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="65" selection-start="361" selection-end="361" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="3825">
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
+        <state line="21" column="77" selection-start="577" selection-end="577" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1740">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/recipes/data_input.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="23" column="8" selection-start="485" selection-end="485" vertical-scroll-proportion="0.47131148" vertical-offset="0" max-vertical-offset="2085">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/recipes.log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="72" column="0" selection-start="4438" selection-end="4438" vertical-scroll-proportion="0.8770492" vertical-offset="438" max-vertical-offset="1170">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/mpuppet.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="44" column="0" selection-start="1896" selection-end="1896" vertical-scroll-proportion="-0.5426696" vertical-offset="908" max-vertical-offset="1365">
-          <folding>
-            <element signature="e#0#37#0" expanded="true" />
-          </folding>
+        <state line="48" column="42" selection-start="2002" selection-end="2002" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1305">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/recipes/download.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="68" column="34" selection-start="2479" selection-end="2479" vertical-scroll-proportion="0.0" vertical-offset="393" max-vertical-offset="1125">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/recipes/xmltest_puppet.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="6" column="25" selection-start="247" selection-end="247" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/recipes/xmltest_chef.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="26" column="0" selection-start="730" selection-end="730" vertical-scroll-proportion="0.37790698" vertical-offset="0" max-vertical-offset="1032">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/recipes/views.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="29" column="41" selection-start="1132" selection-end="1132" vertical-scroll-proportion="0.6702619" vertical-offset="0" max-vertical-offset="1740">
+        <state line="70" column="22" selection-start="2766" selection-end="2766" vertical-scroll-proportion="1.0174419" vertical-offset="0" max-vertical-offset="1785">
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>

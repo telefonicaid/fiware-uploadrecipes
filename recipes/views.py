@@ -17,12 +17,12 @@ def home(request):
         set_error_log(request.method + ": Status -> 403. Method not allowed.")
         HttpResponseNotAllowed("Methods are GET or POST")
 
-    if request.method == 'POST':
+    if request.method == 'GET':
         set_info_log(request.method + " request in home")
         requestt = TheElementTree.parse(
-            "/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest.xml")
+            "/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
         #requestt = TheElementTree.parse(
-        # "/root/xifi-uploadrecipe/recipes/xmltest.xml")
+        # "/root/xifi-uploadrecipe/recipes/xmltest_puppet.xml")
         #requestt = TheElementTree.parse(request)
         root = requestt.getroot()
         name = get_name(root)
@@ -33,14 +33,15 @@ def home(request):
         sos = get_sos(root)
         who, chef_manager, pupet = get_manager(root)
         svn, git, repo = get_repository(root)
-        ports = get_ports(root)
+        tcp = get_ports(root, "ports")
+        udp = get_ports(root, "ports")
         attr = get_attr(root)
         token = get_token_request(request)
         #En el remove para chef, borramos cliente y nodo
         cookbook = Download(cookbook_url, repo, name, version, who)
         catalog = Catalog(name, version, desc, token)
         catalog.get_metadata(who, cookbook_url, sos, depends_string,
-                             ports, repo, token)
+                             tcp, udp, repo, token)
 
         if attr != "":
             catalog.set_attributes(attr)
@@ -58,7 +59,7 @@ def home(request):
         if r is not None:
             try:
                 set_error_log("Error checking the cookbook")
-                remove_all('./cookbooks/')
+                #remove_all('./cookbooks/')
             except Exception:
                 pass
             return r
@@ -77,6 +78,7 @@ def home(request):
             except Exception:
                 pass
             return r
+        '''
         #5.Ahora test the recipe
         hour = "".join(
             "".join("".join(
@@ -107,4 +109,5 @@ def home(request):
         remove_all('./cookbooks/')
         #chef_puppet.remove_master_server(request)
         set_info_log("WELL DONE")
+        '''
         return final_error('final', 0, request)

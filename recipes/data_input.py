@@ -1,7 +1,7 @@
 def get_token_request(request):
-    #token = "12fc35a0d529416da5941e5dd13db4ab"
-    #return token
-    return request.META.get("HTTP_X_AUTH_TOKEN")
+    token = "e64c97ef8d92421dabaf151d902aac3d"
+    return token
+    #return request.META.get("HTTP_X_AUTH_TOKEN")
 
 
 def get_name(root):
@@ -109,11 +109,11 @@ def get_repository(root):
     return svn, git, repo
 
 
-def get_ports(root):
+def get_ports(root, my_tag):
     ports = ""
     exist = False
     for child in root:
-        if child.tag == "ports" and child.text != "22":
+        if child.tag == my_tag and child.text != "22":
             ports += child.text + " "
             exist = True
     if not exist:

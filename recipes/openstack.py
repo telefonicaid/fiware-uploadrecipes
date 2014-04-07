@@ -11,6 +11,7 @@ import json
 
 
 class OpenstackActions:
+
     def __init__(self, name, so, cookbook, version, manager, tenant):
         self.tenant = tenant
         self.name = name
