@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <recipe>
 	<name>puppetmysql</name>
-	<version>2.4.10</version>
+	<version>2</version>
 	<repository>svn</repository>
 	<url>https://forge.fi-ware.org/scmrepos/svn/testbed/trunk/cookbooks/Tester/puppetmysql</url>
 	<config_management>pupet</config_management>
 	<description>Last test of server TESTER</description>
-	<sos>12c2726c-17b5-401f-9dc7-48a351a8fc64</sos>
+	<sos>c48dd642-bb90-4b01-a9ba-3cfb500972cc</sos>
 	<attr>
 		<attribute>name1</attribute>
 		<value>value1</value>

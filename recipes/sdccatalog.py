@@ -1,12 +1,17 @@
 from recipes.error import *
 from recipes.productrequest import *
 from recipes.kingstion import *
-from recipes.loggers import *
-import json
 
 
 class Catalog:
     def __init__(self, name, version, desc, token):
+        """
+        Initial parameters
+        @param name: of the product/software
+        @param version: version of the product / software
+        @param desc: description of the product/software
+        @param token: token
+        """
         self.name = name
         self.version = version
         self.attr = None
@@ -16,10 +21,27 @@ class Catalog:
         self.tenant = get_tenant_from_token(token)
 
     def set_attributes(self, attr):
+        """
+        Set attributes of the product
+        @param attr: attributes
+        @return: the attributes
+        """
         self.attr = attr
         return attr
 
     def get_metadata(self, manager, uri, sos, depend, tcp, udp, repo, token):
+        """
+        Create a string with all the metadatas
+        @param manager: software management type
+        @param uri: url of the software repository
+        @param sos: images id
+        @param depend: software dependencies
+        @param tcp: tcp ports
+        @param udp: udp ports
+        @param repo: type of repository (git or svn)
+        @param token: token
+        @return: the string with the metadata
+        """
         meta = "installator=" + manager
         if tcp == "":
             meta += ";open_ports_tcp=22"
@@ -45,15 +67,14 @@ class Catalog:
         self.meta = meta
         return meta
 
-    def load_data(self):
-        f = open('tester/' + self.name)
-        json_data = f.read()
-        return json.loads(json_data)
-
     def remove_catalog(self, request):
+        """
+        Remove a software from the catalog
+        @param request: user request
+        @return: None if all OK or an error on failure
+        """
         try:
-            g = ProductRequest(get_keystone(), get_sdc(), self.token,
-                               self.tenant)
+            g = ProductRequest(self.token, self.tenant)
             err = g.delete_product_release(self.name, self.version)
             if err is not None:
                 return final_error('Error deleting the product release', 6,
@@ -64,11 +85,16 @@ class Catalog:
         except Exception:
             msg = "Error updating the recipes to SDC server"
             return final_error(msg, 6, request)
+        return None
 
     def add_catalog(self, request):
+        """
+        Add a software to the catalog
+        @param request: user request
+        @return: None if all OK or an error on failure
+        """
         try:
-            g = ProductRequest(get_keystone(), get_sdc(), self.token,
-                               self.tenant)
+            g = ProductRequest(self.token, self.tenant)
             err, product = g.add_product(self.name, self.desc, self.attr,
                                          self.meta)
             if err is not None:
@@ -84,6 +110,11 @@ class Catalog:
 
 
 def process_data(data):
+    """
+    Remove characters from a string
+    @param data: the string
+    @return: the modified string
+    """
     return " ".join(
         " ".join(" ".join(
             " ".join(" ".join(
@@ -91,24 +122,3 @@ def process_data(data):
                     ",")).split(";")).split(
                 "-")).split("    ")).split(
             "   ")).split("  "))
-
-
-def my_list_catalog(request, token, tenant):
-    """
-    Obtain the current product list in the SDC server
-    @param request: Http request
-    @return: The list of product or the error if yo cannot ibtain it
-    """
-    try:
-        g = ProductRequest(get_keystone(), get_sdc(), token, tenant)
-        err, msg = g.get_products()
-        if err is not None:
-            set_error_log(msg)
-            return "Error", final_error(msg, 6, request)
-    except Exception:
-        msg = "Error getting product list"
-        set_error_log(msg)
-        return "Error", final_error(msg, 6, request)
-    set_info_log(
-        "Product list obtained correctly from SDC-Server: " + str(msg))
-    return None, msg

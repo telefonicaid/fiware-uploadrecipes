@@ -1,10 +1,18 @@
 def get_token_request(request):
-    token = "e64c97ef8d92421dabaf151d902aac3d"
-    return token
-    #return request.META.get("HTTP_X_AUTH_TOKEN")
+    """
+    Obtain the token from the headers
+    @param request: Request.
+    @return: token
+    """
+    return request.META.get("HTTP_X_AUTH_TOKEN")
 
 
 def get_name(root):
+    """
+    Obtain the software name
+    @param root: request xml body
+    @return: the software name
+    """
     child = None
     exist = False
     for child in root:
@@ -17,6 +25,11 @@ def get_name(root):
 
 
 def get_version(root):
+    """
+    Obtain the software version
+    @param root: request xml body
+    @return: the software version
+    """
     child = None
     exist = False
     for child in root:
@@ -29,6 +42,11 @@ def get_version(root):
 
 
 def get_cookbook(root):
+    """
+    Obtain the software repository url
+    @param root: request xml body
+    @return: the software repository url
+    """
     exist = False
     child = None
     for child in root:
@@ -41,6 +59,11 @@ def get_cookbook(root):
 
 
 def get_description(root):
+    """
+    Obtain the software description
+    @param root: request xml body
+    @return: the software description
+    """
     exist = False
     child = None
     for child in root:
@@ -53,6 +76,11 @@ def get_description(root):
 
 
 def get_dependencies(root):
+    """
+    Obtain the dependencies necessaries for the software
+    @param root: request xml body
+    @return: the dependencies necessaries for the software
+    """
     dependencies = []
     depends_string = ""
     for child in root:
@@ -72,6 +100,11 @@ def get_dependencies(root):
 
 
 def get_sos(root):
+    """
+    Obtain the images where the software must work
+    @param root: request xml body
+    @return: list of the images where the software must work
+    """
     sos = []
     for child in root:
         if child.tag == "sos":
@@ -80,6 +113,11 @@ def get_sos(root):
 
 
 def get_manager(root):
+    """
+    Obtain the configuration management
+    @param root: request xml body
+    @return: the configuration management
+    """
     child = None
     for child in root:
         if child.tag == "config_management":
@@ -95,6 +133,11 @@ def get_manager(root):
 
 
 def get_repository(root):
+    """
+    Obtain the kind of repository
+    @param root: request xml body
+    @return: the kind of repository
+    """
     child = None
     for child in root:
         if child.tag == "repository":
@@ -110,6 +153,12 @@ def get_repository(root):
 
 
 def get_ports(root, my_tag):
+    """
+    Obtain the open ports
+    @param my_tag: type of ports (udp, tcp...)
+    @param root: request xml body
+    @return: the open ports string
+    """
     ports = ""
     exist = False
     for child in root:
@@ -122,12 +171,19 @@ def get_ports(root, my_tag):
 
 
 def get_attr(root):
+    """
+    Obtain the attributes necessary to run the software
+    @param root: request xml body
+    @return: a string with the attributes necessary to run the software
+    """
     attr = ""
     for child in root:
         if child.tag == "attr":
             name = child[0].text
             value = child[1].text
-            #Hay que ver como meter la descripcion de los attributos
-            #description = child[2].text
-            attr += name + "=" + value + ";"
+            try:
+                description = child[2].text
+            except Exception:
+                description = ""
+            attr += name + "=" + value + "," + description + ";"
     return attr[:-1]

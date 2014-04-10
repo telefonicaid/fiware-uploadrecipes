@@ -12,19 +12,27 @@ import xml.etree.ElementTree as TheElementTree
 
 
 def home(request):
+    """
+    The principal management
+    @param request: the user request
+    @return: an error or an Http Response
+    """
     init_log()
+    #Debería ser solo distinto de POST, pero lo tengo para simplificar
+    #mis pruebas
     if (request.method != 'GET') and (request.method != 'POST'):
         set_error_log(request.method + ": Status -> 403. Method not allowed.")
         HttpResponseNotAllowed("Methods are GET or POST")
 
-    if request.method == 'GET':
+    if request.method == 'POST':
         set_info_log(request.method + " request in home")
-        requestt = TheElementTree.parse(
-            "/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
-        #requestt = TheElementTree.parse(
-        # "/root/xifi-uploadrecipe/recipes/xmltest_puppet.xml")
-        #requestt = TheElementTree.parse(request)
-        root = requestt.getroot()
+        #request_parsed = TheElementTree.parse(
+        #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
+        #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_chef.xml")
+        #"/root/xifi-uploadrecipe/recipes/xmltest_puppet.xml")
+        # Parseamos el xml que recibimos para obtener los datos
+        request_parsed = TheElementTree.parse(request)
+        root = request_parsed.getroot()
         name = get_name(root)
         version = get_version(root)
         cookbook_url = get_cookbook(root)
@@ -37,7 +45,6 @@ def home(request):
         udp = get_ports(root, "ports")
         attr = get_attr(root)
         token = get_token_request(request)
-        #En el remove para chef, borramos cliente y nodo
         cookbook = Download(cookbook_url, repo, name, version, who)
         catalog = Catalog(name, version, desc, token)
         catalog.get_metadata(who, cookbook_url, sos, depends_string,
@@ -45,69 +52,71 @@ def home(request):
 
         if attr != "":
             catalog.set_attributes(attr)
-
-        print("Antes del DESCARGAR COOKBOOK")
         ##1.Descargamos el Cookbook
         set_debug_log("Antes del GET COOKBOOK")
         r = cookbook.get_cookbook(request)
         if r is not None:
             set_error_log("Error downloading the cookbook from the repository")
             return r
+        set_debug_log("Correctly download the software from repository")
+
         ##2.Check the install
-        set_debug_log("Antes del CHECK COOKBOOK")
         r = cookbook.check_cookbook(request)
         if r is not None:
             try:
                 set_error_log("Error checking the cookbook")
-                #remove_all('./cookbooks/')
+                remove_all('./cookbooks/')
             except Exception:
                 pass
             return r
-        set_debug_log("Antes del UPDATE en el server")
-        #4.Update chef_server o al puppet master
+        try:
+            set_info_log("Deleting the repository from our system")
+            remove_all('./cookbooks/')
+            set_info_log("Repository deleted from our system")
+        except Exception:
+            set_error_log("Cannot delete the repository from out system")
+        set_debug_log("Correctly checked the software")
+
+        #3.Update chef_server o al puppet master
         chef_puppet = None
         if who == 'chef':
             chef_puppet = MIChef(name, cookbook_url)
         elif who == 'pupet':
             chef_puppet = MIPuppetMaster(name, repo, cookbook_url)
-
         r = chef_puppet.update_master_server(request)
         if r is not None:
-            try:
-                remove_all('./cookbooks/')
-            except Exception:
-                pass
             return r
-        '''
-        #5.Ahora test the recipe
+
+        #4.Ahora test the recipe
         hour = "".join(
             "".join("".join(
                 "".join(str(datetime.datetime.now()).split(":")).split(
                     "-")).split(" ")).split("."))
+
         for so in sos:
-            vm_name = get_image(so) + hour
-            openest = OpenstackActions(vm_name, so, name, version, who,
-                                       tenant_name)
+            #Eliminamos los puntos del nombre de la VM, por un bug del
+            #puppet wrappet
+            try:
+                vm_name = "".join(get_image(so).split(".")) + hour
+            except Exception:
+                vm_name = get_image(so) + hour
+            #Realizamos las operaciones de despliegue etc
+            openest = OpenstackActions(vm_name, so, name, version, who, token)
             r = openest.test(request)
             if r is not None:
                 try:
-                    remove_all('./cookbooks/')
                     chef_puppet.remove_master_server(request)
                 except Exception:
                     pass
                 return r
-        #6. Add the product to the SDC Catalog
+        #5. Add the product to the SDC Catalog
         r = catalog.add_catalog(request)
         if r is not None:
             try:
                 set_error_log("Error adding the catalog to the SDC")
-                remove_all('./cookbooks/')
                 chef_puppet.remove_master_server(request)
             except Exception:
                 pass
             return r
-        remove_all('./cookbooks/')
-        #chef_puppet.remove_master_server(request)
         set_info_log("WELL DONE")
-        '''
         return final_error('final', 0, request)

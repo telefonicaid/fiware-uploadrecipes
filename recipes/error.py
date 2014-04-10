@@ -5,12 +5,11 @@ from django.template.loader import get_template, Context
 
 def final_error(msg, number, request):
     """
-
-
-    @param msg:
-    @param number:
-    @param request:
-    @rtype : HttpResponse
+    Classify the type of error obtained
+    @param msg: The text msg to explain it
+    @param number: An integer to classify the error
+    @param request: user request
+    @rtype : HttpResponse with the error
     """
     msg1 = "1. Download the cookbook correctly"
     msg2 = "2. The cookbook is well formed"

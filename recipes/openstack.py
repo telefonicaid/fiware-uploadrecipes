@@ -12,8 +12,17 @@ import json
 
 class OpenstackActions:
 
-    def __init__(self, name, so, cookbook, version, manager, tenant):
-        self.tenant = tenant
+    def __init__(self, name, so, cookbook, version, manager, token):
+        """
+        Initial parameters
+        @param name: the VM name
+        @param so: The image id
+        @param cookbook: software name
+        @param version: software version
+        @param manager: the configuration management type
+        @param token: the token
+        """
+        self.tenant = get_tenant_from_token(token)
         self.name = name
         self.so = so
         self.cookbook = cookbook
@@ -22,14 +31,17 @@ class OpenstackActions:
         self.manager = manager
         self.url_openstack = get_openstack()
         self.keystone_url = get_keystone()
-        self.token = get_token()
-        self.sdc_ip = str(Data.objects.get(key="sdc_ip"))
-        self.sdc_password = str(Data.objects.get(key="sdc_password"))
+        self.token = token
         self.header = {"X-Auth-Token": self.token,
                        "Content-Type": "application/json"}
         self.sdc_user = str(Data.objects.get(key="sdc_user"))
 
     def get_vm(self, vm_id):
+        """
+        Obtain data about a vm
+        @param vm_id: the id of the VM
+        @return: the info or None if cannot find the VM
+        """
         the_url = "%s/%s/%s" % (self.url_openstack, "servers", vm_id)
         response = get(the_url, self.header)
         if response.status is not 200 and response.status is not 202:
@@ -42,9 +54,9 @@ class OpenstackActions:
 
     def while_till_deployed(self, vm_id):
         """
-
-        @param vm_id:
-        @return:
+        Wait until a VM is deployed
+        @param vm_id: the id of the VM
+        @return: the IP
         """
         vm_info = self.get_vm(vm_id)
         if vm_info is None:
@@ -62,25 +74,18 @@ class OpenstackActions:
         server = json.loads(vm_info)
         try:
             addresses = server['server']['addresses']['private']
-            ip = addresses[0]['addr']
         except KeyError:
             addresses = server['server']['addresses']['shared-net']
-            ip = addresses[0]['addr']
+        ip = addresses[0]['addr']
         return ip
 
-    def delete_vm(self, vm_id):
-        the_url = "%s/%s/%s" % (self.url_openstack, "servers", vm_id)
-        response = delete(the_url, self.header)
-        if response.status != 204:
-            return 'error deleting vm' + str(response.status) + response.reason
-        else:
-            set_info_log('Deleting VM ........')
-        return None
-
     def deploy_vm(self):
+        """
+        Deploy a VM
+        @return: The Ip of a VM and its id. Return the error if something wrong
+        """
         the_url = "%s/%s" % (self.url_openstack, "servers")
         set_info_log("Deploy VM url: " + the_url)
-        #self.so es un numero de imagen
         payload = '{"server": ' \
                   '{"name": " ' + self.name + '", "imageRef": "' \
                   + self.so + '", "flavorRef": "2"}}'
@@ -96,7 +101,28 @@ class OpenstackActions:
         ip = self.while_till_deployed(vm_id)
         return ip, vm_id
 
+    def delete_vm(self, vm_id):
+        """
+        Delete a VM from its id
+        @param vm_id: the id of the VM
+        @return: None if all OK or an error on failure
+        """
+        the_url = "%s/%s/%s" % (self.url_openstack, "servers", vm_id)
+        response = delete(the_url, self.header)
+        if response.status != 204:
+            return 'error deleting vm' + str(response.status) + response.reason
+        else:
+            set_info_log('Deleting VM ........')
+        return None
+
     def rem_floating_ip(self, floating_ip, server_id, fip_id):
+        """
+        Disassociate a IP from a VM and elease the floating IP
+        @param floating_ip: The floating IP
+        @param server_id: the VM id where the floating id is associated
+        @param fip_id: the floating ip id
+        @return: The flaoting ip if all OK or a mgs error on failure
+        """
         the_url = "%s/%s/%s/%s" % (
             self.url_openstack, "servers", server_id, "action")
         payload = '{ "removeFloatingIp": {"address": "' + floating_ip + '" } }'
@@ -115,19 +141,34 @@ class OpenstackActions:
             return None, msg
         return floating_ip, None
 
-    def add_floating_ip(self, vm_id):
+    def get_pool(self):
+        """
+        Obtain the pools of the tenant
+        @rtype : list
+        @return: a list of pools
+        """
         my_url = "%s/%s" % (self.url_openstack, "os-floating-ip-pools")
         response = get(my_url, self.header)
         if response.status != 200:
-            msg = "Error: Cannot obtain the pools"
-            return None, msg
+            return None
         var = response.read()
         pool = json.loads(var)
         pools = []
         for my_pool in pool['floating_ip_pools']:
             pools.append(my_pool['name'])
         if len(pools) < 1:
-            msg = "No exits any pools"
+            return None
+        return pools
+
+    def add_floating_ip(self, vm_id):
+        """
+        Add a floating IP to a VM
+        @param vm_id: the id of the VM
+        @return: the floating IP and the id of the floating ip
+        """
+        pools = self.get_pool()
+        if pools is None:
+            msg = "No exists any pools or cannot obtain them"
             return None, msg
         my_url = "%s/%s" % (self.url_openstack, "os-floating-ips")
         response = None
@@ -144,6 +185,18 @@ class OpenstackActions:
         floating_ip = floating['floating_ip']['ip']
         floating_ip_id = floating['floating_ip']['id']
         set_info_log(floating_ip)
+        r = self.associate_floating_ip(vm_id, floating_ip)
+        if r is not None:
+            return r
+        return floating_ip, floating_ip_id
+
+    def associate_floating_ip(self, vm_id, floating_ip):
+        """
+        Associate a floating IP to a VM
+        @param vm_id: the VM id
+        @param floating_ip: The floating IP
+        @return: None if all OK or an error on failure
+        """
         my_url = "%s/%s/%s/%s" % (
             self.url_openstack, "servers", vm_id, "action")
         payload = '{ "addFloatingIp": {"address": "' + floating_ip + '" } }'
@@ -152,10 +205,15 @@ class OpenstackActions:
         set_info_log(response.read())
         if response.status is not 202:
             msg = "Error: Cannot assign the floating IP to the VM"
-            return None, msg
-        return floating_ip, floating_ip_id
+            return msg
+        return None
 
     def connect_ssh(self, ip):
+        """
+        Go into a VM to check the software installation
+        @param ip: The IP of the VM
+        @return: None if all OK or an error on failure
+        """
         set_info_log("En el ssh")
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -171,8 +229,13 @@ class OpenstackActions:
                       'execution'
                 set_error_log(msg)
                 return msg
-        stdin, stdout, stderr = ssh.exec_command('chef-client')
-        stdin.flush()
+        if self.manager == 'chef':
+            stdin, stdout, stderr = ssh.exec_command('chef-client')
+            stdin.flush()
+        else:
+            ssh.exec_command('service puppet stop')
+            stdin, stdout, stderr = ssh.exec_command('servicepuppet agent -t')
+            stdin.flush()
         result = ''
         for line in stdout:
             result += line.strip('\n')
@@ -185,6 +248,11 @@ class OpenstackActions:
         return None
 
     def test(self, request):
+        """
+        Test the software into a VM
+        @param request: the user request
+        @return:
+        """
         set_info_log("En el test de openstack")
         set_info_log("*************")
         set_info_log(self.name)
@@ -196,7 +264,6 @@ class OpenstackActions:
         if self.manager == 'chef':
             chef_puppet = chef_management.MINode(self.name)
             software_install = self.cookbook + '::' + self.version + "_install"
-
         if self.manager == 'pupet':
             chef_puppet = puppet_management.MINode(self.name, self.tenant)
             software_install = [self.cookbook, self.version]
