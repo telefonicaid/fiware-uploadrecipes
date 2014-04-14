@@ -1,5 +1,5 @@
 {% block content %}
-<form method="POST" action="."> {% csrf_token %}
+<form method="POST" action=".">
 <table>
 <tr>
     <td></td>
@@ -28,11 +28,16 @@
 <tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
 <tr>
     <td>Operating Systems (*)</td>
-    <td><INPUT name="centos" type="checkbox" {{centos}}/>CentOS<br/></td>
-    <tr><td><td><INPUT name="ubuntu" type="checkbox" {{ubuntu}}/>Ubuntu<br/></td></td>
-</tr>
-<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+    <td><select multiple name="sos">
+        {% for so in so_list_check %}
+            <option selected value={{so}}>{{so}}</option>
+        {% endfor %}
+        {% for so in so_list %}
+            <option value={{so}}>{{so}}</option>
+        {% endfor %}
+    </select></td>
 
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
 <tr>
     <td>Description</td>
     <td><TEXTAREA rows="4" name="desc">{{desc}}</TEXTAREA></td>

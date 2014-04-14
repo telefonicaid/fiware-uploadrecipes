@@ -1,9 +1,10 @@
 from django.db import models
 
-# Create your models here.
-
 
 class Data(models.Model):
+    """
+    Tuple from necessary parameters
+    """
     key = models.CharField(max_length=50)
     value = models.CharField(max_length=50)
 
@@ -12,6 +13,9 @@ class Data(models.Model):
 
 
 class Recipe(models.Model):
+    """
+    SDC data necessary to add a product
+    """
     name = models.CharField(max_length=50)
     version = models.CharField(max_length=10)
     description = models.CharField(max_length=200)

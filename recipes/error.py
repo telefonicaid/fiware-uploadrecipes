@@ -1,13 +1,15 @@
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.template.loader import get_template, Context
-from recipes.loggers import *
 
 
 def final_error(msg, number, request):
     """
-
-    @rtype : HttpResponse
+    Classify the type of error obtained
+    @param msg: The text msg to explain it
+    @param number: An integer to classify the error
+    @param request: user request
+    @rtype : HttpResponse with the error
     """
     msg1 = "1. Download the cookbook correctly"
     msg2 = "2. The cookbook is well formed"

@@ -1,93 +1,92 @@
-import paramiko
-from recipes.download import *
 from recipes.error import final_error
-from recipes.models import Data
 from recipes.loggers import *
+import os
+import recipes.imanagement as im
 
-url_repo = str(Data.objects.get(key="url_repository"))
 
-
-class Mychef:
-    def __init__(self, name, repo, cookbook_url):
+class MIChef(im.IServer):
+    def __init__(self, name, cookbook_url):
+        """
+        Initial parameters
+        @param name: cookbook name
+        @param cookbook_url: url from repository
+        """
         self.name = name
-        self.folder = str(Data.objects.get(key="chef_server_folder"))
-        self.ip = str(Data.objects.get(key="chef_server_ip"))
-        self.password = str(Data.objects.get(key="chef_server_password"))
-        self.repo = repo
         self.cookbook_url = cookbook_url
 
     def update_master_server(self, request):
-        try:
-            self.update_server(request)
-            set_info_log("Cookbook upload into chef-server")
-        except:
-            msg = "Error uploading the repository into the chef-server"
+        """
+        Add the software into puppet-master or chef-server
+        @param request: request of the user
+        @return: None if all OK or an error on failure
+        """
+        my_cook = 'cookbooks'
+        output = os.system(
+            "knife cookbook upload " + self.name + " -o " + my_cook)
+        if output > 0:
+            msg = "Error uploading the cookbook into chef_server"
             set_error_log(msg)
             return final_error(msg, 4, request)
-        try:
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh_client.connect(self.ip, 22, 'root', self.password)
-        except Exception:
-            msg = "Error connecting with the chef server"
-            set_error_log(msg)
-            return final_error(msg, 4, request)
-        try:
-            set_info_log(self.folder)
-            uentrada, usalida, uerror = ssh_client.exec_command(
-                'svn update ' + self.folder)
-            set_info_log(usalida.read())
-        except Exception:
-            ssh_client.close()
-            msg = "Error updating the test repository into chef server"
-            return final_error(msg, 4, request)
-        try:
-            entrada2, salida2, error2 = ssh_client.exec_command(
-                'knife cookbook upload ' + self.name + ' -o ' + self.folder)
-            set_info_log(salida2.read())
-        except Exception:
-            ssh_client.close()
-            msg = "Error updating cookbook into the chef server" + self.folder
-            return final_error(msg, 4, request)
-        ssh_client.close()
+        set_info_log("Correctly upload the cookbook " + self.name)
         return None
 
     def remove_master_server(self, request):
-        try:
-            ssh_client = paramiko.SSHClient()
-            ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            ssh_client.connect(self.ip, 22, 'root', self.password)
-        except Exception:
-            msg = "Error connecting with the chef server"
+        """
+        Remove the software from puppet-master or chef-server
+        @param request: request of the user
+        @return: None if all OK or an error on failure
+        """
+        output = os.system("knife cookbook delete " + self.name + " -y")
+        if output > 0:
+            msg = "Error downloading the cookbook from chef_server"
+            set_error_log(msg)
             return final_error(msg, 4, request)
-        try:
-            command = 'knife cookbook delete ' + self.name + ' -y'
-            rentrada, rsalida, rerror = ssh_client.exec_command(command)
-            set_info_log(rsalida.read())
-            ssh_client.close()
-        except Exception:
-            msg = "Error deleting the cookbook from the chef_server"
-            return final_error(msg, 4, request)
+        set_info_log("Correctly deleted the cookbook " + self.name)
         return None
 
-    def update_server(self, request):
-        my_cook = './cookbooks/'
-        client = Client()
-        try:
-            set_info_log("url: " + url_repo)
-            set_info_log("cookbook: " + my_cook)
-            client.checkout(url_repo, my_cook)
-            set_info_log("Download Tester repository")
-        except Exception:
-            set_info_log("The cookbook is already into the repository")
-        try:
-            client.add(my_cook + self.name)
-            client.callback_get_login = get_login
-            client.checkin([my_cook + self.name],
-                           "Adding the cookbook " + self.name)
-            set_info_log("Commit in Tester folder")
-        except Exception:
-            msg = "Error: Cannot commit to the repository"
+
+class MINode(im.IServer):
+    def __init__(self, name):
+        """
+        Initial parameters
+        @param name: Name of the node
+        """
+        self.name = name
+
+    def delete_node_client(self):
+        """
+        Delete the node from chef-server or puppet-master
+        @return: None if all OK or an error on failure
+        """
+        output = os.system("knife client delete " + self.name + " -y")
+        if output > 0:
+            msg = "Error deleting " + self.name + " client from chef_server"
             set_error_log(msg)
-            return final_error(msg, 3, request)
+            return msg
+        output2 = os.system("knife node delete " + self.name + " -y")
+        set_info_log(
+            "Client " + self.name + " correctly deleted from chef-server")
+        if output2 > 0:
+            msg = "Error deleting " + self.name + " node from chef_server"
+            set_error_log(msg)
+            return msg
+        set_info_log(
+            "Node " + self.name + " correctly deleted from chef-server")
+        return None
+
+    def add_node_run_list(self, software):
+        """
+        add the software to install into the list of the node
+        @param software: The software
+        @return: None if all OK or an error on failure
+        """
+        output = os.system(
+            "knife node run_list add " + self.name + " " + software)
+        if output > 0:
+            msg = "Error adding the recipe: " + software + "into the node " \
+                  + self.name
+            set_error_log(msg)
+            return msg
+        set_info_log(
+            "Added the recipe: " + software + "into the node " + self.name)
         return None
