@@ -96,14 +96,10 @@ class ProductRequest:
             attributes = self.process_attributes(attributes)
             for att in attributes:
                 product.add_attribute(att)
-        print("Proceso bien los attrs")
         metadatas = self.process_attributes(metadatas)
         for meta in metadatas:
             product.add_metadata(meta)
-        print(1)
         payload = product.to_product_xml()
-        print(2)
-        print(tostring(payload))
         response = post(my_url, self.header2, tostring(payload))
         if response.status is not 200:
             error = 'error to add the product sdc ' + str(response.status)
@@ -121,10 +117,14 @@ class ProductRequest:
         @param version: the version of the release
         @return: None if all OK / an error on failure
         """
+        print(1)
         my_url = "%s/%s/%s/%s" % (
             self.sdc_url, "catalog/product", product_name, "release")
         product_release = ProductRelease(product, version)
         payload = product_release.to_product_xml()
+        print(2)
+        print(my_url)
+        print(tostring(payload))
         response = post(my_url, self.header2, tostring(payload))
         if response.status != 200:
             return (

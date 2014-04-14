@@ -18,7 +18,7 @@ def home(request):
     @return: an error or an Http Response
     """
     init_log()
-    #Debería ser solo distinto de POST, pero lo tengo para simplificar
+    #Deberi a ser solo distinto de POST, pero lo tengo para simplificar
     #mis pruebas
     if (request.method != 'GET') and (request.method != 'POST'):
         set_error_log(request.method + ": Status -> 403. Method not allowed.")
@@ -29,7 +29,7 @@ def home(request):
         #request_parsed = TheElementTree.parse(
         #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
         #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_chef.xml")
-        #"/root/xifi-uploadrecipe/recipes/xmltest_puppet.xml")
+        #"/root/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
         # Parseamos el xml que recibimos para obtener los datos
         request_parsed = TheElementTree.parse(request)
         root = request_parsed.getroot()
@@ -41,15 +41,14 @@ def home(request):
         sos = get_sos(root)
         who, chef_manager, pupet = get_manager(root)
         svn, git, repo = get_repository(root)
-        tcp = get_ports(root, "ports")
-        udp = get_ports(root, "ports")
+        tcp = get_ports(root, "tcp_ports")
+        udp = get_ports(root, "udp_ports")
         attr = get_attr(root)
         token = get_token_request(request)
         cookbook = Download(cookbook_url, repo, name, version, who)
         catalog = Catalog(name, version, desc, token)
         catalog.get_metadata(who, cookbook_url, sos, depends_string,
                              tcp, udp, repo, token)
-
         if attr != "":
             catalog.set_attributes(attr)
         ##1.Descargamos el Cookbook
@@ -114,7 +113,7 @@ def home(request):
         if r is not None:
             try:
                 set_error_log("Error adding the catalog to the SDC")
-                chef_puppet.remove_master_server(request)
+                #chef_puppet.remove_master_server(request)
             except Exception:
                 pass
             return r

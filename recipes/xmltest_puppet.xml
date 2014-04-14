@@ -17,8 +17,8 @@
 		<value>value2</value>
 		<description>description2</description>
 	</attr>
-	<ports>port1</ports>
-	<ports>port2</ports>
+	<tcp_ports>port1</tcp_ports>
+	<udp_ports>port2</udp_ports>
 	<dependencies>
 		<name>git</name>
 		<version>1.7</version>

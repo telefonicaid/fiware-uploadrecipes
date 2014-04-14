@@ -99,6 +99,7 @@ class Catalog:
                                          self.meta)
             if err is not None:
                 return final_error("Error adding the product", 6, request)
+            print("product release")
             err = g.add_product_release(product, self.name, self.version)
             if err is not None:
                 return final_error("Error adding the product release", 6,
