@@ -14,5 +14,5 @@ mockito==0.5.2
 pika==0.9.13
 PyChef==0.2.3
 paramiko==1.13.0
-GitPython==0.3.2
-pysvn
+GitPython
+#pysvn

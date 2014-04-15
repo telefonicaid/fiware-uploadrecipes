@@ -4,5 +4,5 @@ pip install -r requirements.txt
 
 python manage.py syncdb
 
-python manage.py test --settings=settings.jenkins deactivate
+python manage.py test recipes --settings=settings.jenkins deactivate
 
