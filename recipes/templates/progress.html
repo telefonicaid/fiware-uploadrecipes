@@ -1,0 +1,41 @@
+{% block content %}
+<form method="POST" action= "{% url "recipes.views.check" %}" > {% csrf_token %}
+Completado el {{frac}}
+<br>
+<br>
+<progress value= {{value}} max="100"></progress>
+</form>
+ <hr>
+{% if msg1 %}
+    <br><font>{{msg1}}</font><br>
+{% endif %}
+{% if msg2 %}
+    <br><font>{{msg2}}</font><br>
+{% endif %}
+{% if msg3 %}
+    <br><font>{{msg3}}</font><br>
+{% endif %}
+{% if msg4 %}
+    <br><font>{{msg4}}</font><br>
+{% endif %}
+{% if msg5 %}
+     <br><font>{{msg5}}</font><br>
+{% endif %}
+{% if msg6 %}
+    <br><font>{{msg6}}</font><br>
+{% endif %}
+{% if msg7 %}
+    <br><font>{{msg7}}</font><br>
+{% endif %}
+
+{% if ok %}
+    <br><font size=6 color=green>{{ok}}</font><br>
+{% endif %}
+{% if err %}
+    <br><font size=6 color=red>Error:</font><br>
+    <blockquote><br><font size=2 color=red>{{err}}</font></blockquote>
+{% endif %}
+<hr/>
+
+{% endblock %}
+

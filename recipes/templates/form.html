@@ -1,0 +1,85 @@
+{% block content %}
+<form method="POST" action=".">
+<table>
+<tr>
+    <td></td>
+    <td><h3>Recipe Tester</h3></td>
+</tr>
+<tr>
+    <td>Cookbook URL (*)</td>
+    <td><INPUT type=text name="url" value={{url}}></td>
+</tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Repository (*)</td>
+    <td><input name="repo" type="radio" value="git" {{git}}/>git<br /></td>
+    <tr><td><td><input name="repo" type="radio" value="svn" {{svn}}/>svn<br /></td>
+</tr></td></tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Name (*)</td>
+    <td><INPUT type=text name="name" value={{name}}></td>
+</tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Version (*)</td>
+    <td><INPUT type=text name="version" value={{version}}></td>
+</tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Operating Systems (*)</td>
+    <td><select multiple name="sos">
+        {% for so in so_list_check %}
+            <option selected value={{so}}>{{so}}</option>
+        {% endfor %}
+        {% for so in so_list %}
+            <option value={{so}}>{{so}}</option>
+        {% endfor %}
+    </select></td>
+
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Description</td>
+    <td><TEXTAREA rows="4" name="desc">{{desc}}</TEXTAREA></td>
+</tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+
+<tr>
+    <td>Configuration Management (*)</td>
+    <td><input name="who" type="radio" value="chef" {{chef}}/>Chef<br /></td>
+    <tr><td><td><input name="who" type="radio" value="pupet" {{pupet}}/>Puppet<br /></td>
+</tr></td></tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Attributes</td>
+    <td><INPUT type=text name="attr" value={{attr}}></td>
+</tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Open Ports</td>
+    <td><INPUT type=text name="ports" value={{ports}}></td>
+</tr>
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+    <td>Dependencies</td>
+    <td><select multiple name="depends">
+        {% for depends in mydependslist %}
+            <option selected value={{depends}}>{{depends}}</option>
+        {% endfor %}
+        {% for depends in dependslist %}
+            <option value={{depends}}>{{depends}}</option>
+        {% endfor %}
+    </select></td>
+
+<tr></tr><tr></tr><tr></tr><tr></tr><tr></tr>
+<tr>
+	<td><td COLSPAN=2>
+	<INPUT type="submit" value="Check and Upload"></td></td>
+</tr>
+</table>
+</form>
+<font size=4 color=red>{{err}}</font>
+<br />
+Fields with (*) are required
+{% endblock %}
+
