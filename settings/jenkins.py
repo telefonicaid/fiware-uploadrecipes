@@ -2,7 +2,7 @@ __author__ = 'henar'
 
 from os.path import join, exists
 from os import makedirs
-from cloto.settings import *
+from xifi-uploadrecipes.settings import *
 
 # Integrate nose with django. django-nose plugin
 INSTALLED_APPS = INSTALLED_APPS + ('django_nose', )
