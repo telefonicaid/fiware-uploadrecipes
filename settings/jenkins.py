@@ -2,10 +2,10 @@ __author__ = 'henar'
 
 from os.path import join, exists
 from os import makedirs
-from settings import *
+from test_server.settings import *
 
 # Integrate nose with django. django-nose plugin
-#INSTALLED_APPS = INSTALLED_APPS + ('django_nose', )
+INSTALLED_APPS = INSTALLED_APPS + ('django_nose', )
 
 TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
 
