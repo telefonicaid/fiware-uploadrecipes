@@ -1,5 +1,8 @@
+# coding=utf-8
 from urlparse import urlparse
 import httplib
+#from http.client import *
+#from urllib.parse import *
 
 
 def __do_http_req(method, url, headers, payload):
@@ -9,6 +12,7 @@ def __do_http_req(method, url, headers, payload):
     """
     parsed_url = urlparse(url)
     con = httplib.HTTPConnection(parsed_url.netloc)
+    #con = HTTPConnection(parsed_url.netloc)
     con.request(method, parsed_url.path, payload, headers)
     return con.getresponse()
 

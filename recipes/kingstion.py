@@ -1,3 +1,4 @@
+# coding=utf-8
 from recipes.http import *
 from xml.dom.minidom import parseString
 import json

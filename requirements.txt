@@ -16,3 +16,4 @@ PyChef==0.2.3
 paramiko==1.13.0
 GitPython
 #pysvn
+#git

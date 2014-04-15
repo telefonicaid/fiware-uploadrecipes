@@ -1,7 +1,12 @@
+# coding=utf-8
 from xml.etree.ElementTree import Element, SubElement, tostring
 
 
 class Attribute:
+
+    """
+    Attribute Class
+    """
     def __init__(self, att_name, att_value, att_desc):
         self.key = att_name
         self.value = att_value
@@ -9,6 +14,11 @@ class Attribute:
 
 
 class Product:
+
+    """
+    Product Class
+    """
+
     def __init__(self, product_name, product_description):
         """
         Initial parameters
@@ -19,6 +29,7 @@ class Product:
         self.description = product_description
         self.attributes = []
         self.metadatas = []
+
 
     def add_attribute(self, attribute):
         """
@@ -33,20 +44,6 @@ class Product:
         @param metadata: the metadata
         """
         self.metadatas.append(metadata)
-
-    def add_attributes(self, attributes):
-        """
-        Add the attributes to the product definition
-        @param attributes: the attributes
-        """
-        self.attributes = attributes
-
-    def add_metadatas(self, metadatas):
-        """
-        Add the metadatas to the product definition
-        @param metadatas: the metadatas
-        """
-        self.metadatas = metadatas
 
     def to_product_xml(self):
         """
@@ -78,11 +75,25 @@ class Product:
 
 
 class ProductRelease:
+
+    """
+    Product release class
+    """
+
     def __init__(self, product, product_version):
+        """
+        Initial parameters
+        @param product: the product
+        @param product_version: the product version
+        """
         self.product = product
         self.version = product_version
 
     def to_product_xml(self):
+        """
+        Convert a product release into a xml
+        @return: xml product release
+        """
         product_release = Element('productReleaseDto')
         version = SubElement(product_release, 'version')
         version.text = self.version

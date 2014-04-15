@@ -1,4 +1,4 @@
-from recipes.error import *
+# coding=utf-8
 from recipes.productrequest import *
 from recipes.kingstion import *
 
@@ -44,9 +44,9 @@ class Catalog:
         """
         meta = "installator=" + manager
         if tcp == "":
-            meta += ";open_ports_tcp=22"
+            meta += ";open_ports=22"
         else:
-            meta += ";open_ports_tcp=22 " + tcp
+            meta += ";open_ports=22 " + tcp
         meta += ";cloud=yes"
         meta += ";open_ports_udp=" + udp
         meta += ";repository=" + repo
@@ -77,14 +77,13 @@ class Catalog:
             g = ProductRequest(self.token, self.tenant)
             err = g.delete_product_release(self.name, self.version)
             if err is not None:
-                return final_error('Error deleting the product release', 6,
-                                   request)
+                return 'Error deleting the product release'
             err = g.delete_product(self.name)
             if err is not None:
-                return final_error("Error deleting the product ", 6, request)
+                return "Error deleting the product "
         except Exception:
             msg = "Error updating the recipes to SDC server"
-            return final_error(msg, 6, request)
+            return msg
         return None
 
     def add_catalog(self, request):
@@ -98,15 +97,13 @@ class Catalog:
             err, product = g.add_product(self.name, self.desc, self.attr,
                                          self.meta)
             if err is not None:
-                return final_error("Error adding the product", 6, request)
-            print("product release")
+                return "Error adding the product"
             err = g.add_product_release(product, self.name, self.version)
             if err is not None:
-                return final_error("Error adding the product release", 6,
-                                   request)
+                return "Error adding the product release"
         except Exception:
             msg = "Error updating the recipes to SDC server"
-            return final_error(msg, 6, request)
+            return msg
         return None
 
 

@@ -1,17 +1,13 @@
+# coding=utf-8
 import time
 import paramiko
-from recipes.error import *
-from recipes.kingstion import *
-from recipes.http import *
-from recipes.models import *
-from recipes.loggers import *
+from recipes import kingstion, http, loggers, models
 import recipes.mchef as chef_management
 import recipes.mpuppet as puppet_management
 import json
 
 
 class OpenstackActions:
-
     def __init__(self, name, so, cookbook, version, manager, token):
         """
         Initial parameters
@@ -22,19 +18,19 @@ class OpenstackActions:
         @param manager: the configuration management type
         @param token: the token
         """
-        self.tenant = get_tenant_from_token(token)
+        self.tenant = kingstion.get_tenant_from_token(token)
         self.name = name
         self.so = so
         self.cookbook = cookbook
         self.version = version
         self.delete = True
         self.manager = manager
-        self.url_openstack = get_openstack()
-        self.keystone_url = get_keystone()
+        self.url_openstack = kingstion.get_openstack()
+        self.keystone_url = kingstion.get_keystone()
         self.token = token
         self.header = {"X-Auth-Token": self.token,
                        "Content-Type": "application/json"}
-        self.sdc_user = str(Data.objects.get(key="sdc_user"))
+        self.sdc_user = str(models.Data.objects.get(key="sdc_user"))
 
     def get_vm(self, vm_id):
         """
@@ -43,13 +39,14 @@ class OpenstackActions:
         @return: the info or None if cannot find the VM
         """
         the_url = "%s/%s/%s" % (self.url_openstack, "servers", vm_id)
-        response = get(the_url, self.header)
+        response = http.get(the_url, self.header)
         if response.status is not 200 and response.status is not 202:
-            set_error_log(str(response.status) + ': error to add the product')
+            loggers.set_error_log(
+                str(response.status) + ': error to add the product')
             return None
         else:
             info = response.read()
-            set_info_log(info)
+            loggers.set_info_log(info)
             return info
 
     def while_till_deployed(self, vm_id):
@@ -85,11 +82,11 @@ class OpenstackActions:
         @return: The Ip of a VM and its id. Return the error if something wrong
         """
         the_url = "%s/%s" % (self.url_openstack, "servers")
-        set_info_log("Deploy VM url: " + the_url)
+        loggers.set_info_log("Deploy VM url: " + the_url)
         payload = '{"server": ' \
                   '{"name": " ' + self.name + '", "imageRef": "' \
                   + self.so + '", "flavorRef": "2"}}'
-        response = post(the_url, self.header, payload)
+        response = http.post(the_url, self.header, payload)
         if response.status is not 200 and response.status is not 202:
             msg = str(response.status) + '. Error deploying the VM: ' + str(
                 response.reason)
@@ -108,11 +105,11 @@ class OpenstackActions:
         @return: None if all OK or an error on failure
         """
         the_url = "%s/%s/%s" % (self.url_openstack, "servers", vm_id)
-        response = delete(the_url, self.header)
+        response = http.delete(the_url, self.header)
         if response.status != 204:
             return 'error deleting vm' + str(response.status) + response.reason
         else:
-            set_info_log('Deleting VM ........')
+            loggers.set_info_log('Deleting VM ........')
         return None
 
     def rem_floating_ip(self, floating_ip, server_id, fip_id):
@@ -126,16 +123,16 @@ class OpenstackActions:
         the_url = "%s/%s/%s/%s" % (
             self.url_openstack, "servers", server_id, "action")
         payload = '{ "removeFloatingIp": {"address": "' + floating_ip + '" } }'
-        set_info_log(the_url)
-        set_info_log(payload)
-        response = post(the_url, self.header, payload)
-        set_info_log(response.status)
+        loggers.set_info_log(the_url)
+        loggers.set_info_log(payload)
+        response = http.post(the_url, self.header, payload)
+        loggers.set_info_log(response.status)
         if response.status != 202:
             msg = "Error: Cannot un-assign the floating IP"
             return None, msg
         the_url = "%s/%s/%s" % (self.url_openstack, "os-floating-ips", fip_id)
-        response = delete(the_url, self.header)
-        set_info_log("Deleted the floating IP")
+        response = http.delete(the_url, self.header)
+        loggers.set_info_log("Deleted the floating IP")
         if response.status != 202:
             msg = "Error deleting the floating IP"
             return None, msg
@@ -148,7 +145,7 @@ class OpenstackActions:
         @return: a list of pools
         """
         my_url = "%s/%s" % (self.url_openstack, "os-floating-ip-pools")
-        response = get(my_url, self.header)
+        response = http.get(my_url, self.header)
         if response.status != 200:
             return None
         var = response.read()
@@ -174,9 +171,9 @@ class OpenstackActions:
         response = None
         for pol in pools:
             payload = '{ "pool": "' + pol + '"}'
-            response = post(my_url, self.header, payload)
+            response = http.post(my_url, self.header, payload)
             if response.status is 200:
-                set_info_log("IP from pool: " + pol)
+                loggers.set_info_log("IP from pool: " + pol)
                 break
         if response.status != 200:
             msg = "Error: cannot create a floating IP in any pool"
@@ -184,7 +181,7 @@ class OpenstackActions:
         floating = json.loads(response.read())
         floating_ip = floating['floating_ip']['ip']
         floating_ip_id = floating['floating_ip']['id']
-        set_info_log(floating_ip)
+        loggers.set_info_log(floating_ip)
         r = self.associate_floating_ip(vm_id, floating_ip)
         if r is not None:
             return r
@@ -200,9 +197,9 @@ class OpenstackActions:
         my_url = "%s/%s/%s/%s" % (
             self.url_openstack, "servers", vm_id, "action")
         payload = '{ "addFloatingIp": {"address": "' + floating_ip + '" } }'
-        set_info_log(my_url)
-        response = post(my_url, self.header, payload)
-        set_info_log(response.read())
+        loggers.set_info_log(my_url)
+        response = http.post(my_url, self.header, payload)
+        loggers.set_info_log(response.read())
         if response.status is not 202:
             msg = "Error: Cannot assign the floating IP to the VM"
             return msg
@@ -214,20 +211,20 @@ class OpenstackActions:
         @param ip: The IP of the VM
         @return: None if all OK or an error on failure
         """
-        set_info_log("En el ssh")
+        loggers.set_info_log("En el ssh")
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         try:
             ssh.connect(ip, username=self.sdc_user, password=str(
-                Data.objects.get(key="ubuntu_password")))
+                models.Data.objects.get(key="ubuntu_password")))
         except Exception:
             try:
                 ssh.connect(ip, username=self.sdc_user, password=str(
-                    Data.objects.get(key="centos_password")))
+                    models.Data.objects.get(key="centos_password")))
             except Exception:
                 msg = 'Error connecting to the Chef-server for recipe ' \
                       'execution'
-                set_error_log(msg)
+                loggers.set_error_log(msg)
                 return msg
         if self.manager == 'chef':
             stdin, stdout, stderr = ssh.exec_command('chef-client')
@@ -239,26 +236,25 @@ class OpenstackActions:
         result = ''
         for line in stdout:
             result += line.strip('\n')
-            set_info_log(line.strip('\n'))
+            loggers.set_info_log(line.strip('\n'))
         ssh.close()
         if "FATAL" in result:
             msg = 'ERROR to execute the recipe'
-            set_error_log(msg)
+            loggers.set_error_log(msg)
             return msg
         return None
 
-    def test(self, request):
+    def test(self):
         """
         Test the software into a VM
-        @param request: the user request
         @return:
         """
-        set_info_log("En el test de openstack")
-        set_info_log("*************")
-        set_info_log(self.name)
-        set_info_log(self.so)
-        set_info_log(self.cookbook)
-        set_info_log("*************")
+        loggers.set_info_log("En el test de openstack")
+        loggers.set_info_log("*************")
+        loggers.set_info_log(self.name)
+        loggers.set_info_log(self.so)
+        loggers.set_info_log(self.cookbook)
+        loggers.set_info_log("*************")
         chef_puppet = None
         software_install = ''
         if self.manager == 'chef':
@@ -270,21 +266,23 @@ class OpenstackActions:
 
         if self.token is None:
             msg = "Error: Cannot obtained the token"
-            set_error_log(msg)
-            return final_error(msg, 5, request)
+            loggers.set_error_log(msg)
+            return msg
 
         ip, server_id = self.deploy_vm()
         if ip is None:
             msg = server_id + ". Image id: " + self.so
-            set_error_log(msg)
-            return final_error(msg, 5, request)
-        set_info_log("Correctly deployed VM withb image id: " + self.so)
+            loggers.set_error_log(msg)
+            return msg
+        loggers.set_info_log(
+            "Correctly deployed VM withb image id: " + self.so)
         fip, fip_id = self.add_floating_ip(server_id)
 
         if fip is None:
             self.delete_vm(server_id)
-            set_error_log(fip_id)
-            return final_error(fip_id, 5, request)
+            msg = "Error, cannot find floating IP: " + fip_id
+            loggers.set_error_log(msg)
+            return msg
         time.sleep(60)
 
         r = chef_puppet.add_node_run_list(software_install)
@@ -293,8 +291,8 @@ class OpenstackActions:
             self.delete_vm(server_id)
             msg = 'Error installing software in a VM with image id: ' + \
                   self.so + '. Error: ' + r
-            set_error_log(msg)
-            return final_error(msg, 5, request)
+            loggers.set_error_log(msg)
+            return msg
 
         r = self.connect_ssh(fip)
         if r is not None:
@@ -302,16 +300,16 @@ class OpenstackActions:
             self.delete_vm(server_id)
             chef_puppet.delete_node_client()
             msg = "Error testing the software:  " + r
-            set_error_log(msg)
-            return final_error(msg, 5, request)
+            loggers.set_error_log(msg)
+            return msg
 
-        set_info_log("Antes del delete")
+        loggers.set_info_log("Antes del delete")
         r = self.delete_vm(server_id)
         chef_puppet.delete_node_client()
         if r is not None:
             msg = "Error deleting the testing VM: " + r
-            set_error_log(msg)
-            return final_error(msg, 5, request)
+            loggers.set_error_log(msg)
+            return msg
         self.rem_floating_ip(fip, server_id, fip_id)
 
         return None

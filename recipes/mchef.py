@@ -1,4 +1,4 @@
-from recipes.error import final_error
+# coding=utf-8
 from recipes.loggers import *
 import os
 import recipes.imanagement as im
@@ -14,10 +14,9 @@ class MIChef(im.IServer):
         self.name = name
         self.cookbook_url = cookbook_url
 
-    def update_master_server(self, request):
+    def update_master_server(self):
         """
         Add the software into puppet-master or chef-server
-        @param request: request of the user
         @return: None if all OK or an error on failure
         """
         my_cook = 'cookbooks'
@@ -26,21 +25,20 @@ class MIChef(im.IServer):
         if output > 0:
             msg = "Error uploading the cookbook into chef_server"
             set_error_log(msg)
-            return final_error(msg, 4, request)
+            return msg
         set_info_log("Correctly upload the cookbook " + self.name)
         return None
 
-    def remove_master_server(self, request):
+    def remove_master_server(self):
         """
         Remove the software from puppet-master or chef-server
-        @param request: request of the user
         @return: None if all OK or an error on failure
         """
         output = os.system("knife cookbook delete " + self.name + " -y")
         if output > 0:
             msg = "Error downloading the cookbook from chef_server"
             set_error_log(msg)
-            return final_error(msg, 4, request)
+            return msg
         set_info_log("Correctly deleted the cookbook " + self.name)
         return None
 
