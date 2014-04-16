@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.http import HttpResponse
 from django.template import RequestContext
 from django.template.loader import get_template, Context
@@ -6,6 +7,7 @@ from django.template.loader import get_template, Context
 def final_error(msg, number, request):
     """
     Classify the type of error obtained
+    :type number: int
     @param msg: The text msg to explain it
     @param number: An integer to classify the error
     @param request: user request

@@ -1,3 +1,4 @@
+# coding=utf-8
 def get_token_request(request):
     """
     Obtain the token from the headers

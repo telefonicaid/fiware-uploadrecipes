@@ -1,11 +1,15 @@
+# coding=utf-8
 from git import *
 from pysvn import *
-from recipes.error import *
 from recipes.loggers import *
 import os
 
 
 class Download:
+    """
+
+    """
+
     def __init__(self, url, repo, cookbook_name, version, who):
         """
         Initial parameters
@@ -22,10 +26,9 @@ class Download:
         self.version = version
         self.manager = who
 
-    def get_cookbook(self, request):
+    def get_cookbook(self):
         """
         Download the repository
-        @param request: user request
         @return: None if all OK or an error on failure
         """
         folder = './cookbooks/'
@@ -39,7 +42,7 @@ class Download:
                 msg += "Error: Cannot download the cookbook from " \
                        "svn repository"
                 set_error_log(msg)
-                return final_error(msg, 1, request)
+                return msg
         elif self.repo == 'git':
             try:
                 Git().clone(self.url, folder + self.name)
@@ -48,18 +51,17 @@ class Download:
                 msg += "Error: Cannot download the cookbook from " \
                        "git repository"
                 set_error_log(msg)
-                return final_error(msg, 1, request)
+                return msg
         else:
             msg += "Error: Cannot find the revision control"
             set_error_log(msg)
-            return final_error(msg, 1, request)
+            return msg
         set_info_log(msg + "Complete Download")
         return None
 
-    def check_cookbook(self, request):
+    def check_cookbook(self):
         """
         Check the correct composition repository file
-        @param request: user request
         @return: None if all OK or an error on failure
         """
         set_info_log("Checking the " + self.manager + " cookbook.....")
@@ -73,7 +75,7 @@ class Download:
         else:
             msg = "Error: invalid format. Recipe: version_install"
             set_error_log(msg)
-            return final_error(msg, 2, request)
+            return msg
         return None
 
 

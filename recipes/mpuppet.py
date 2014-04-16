@@ -1,11 +1,12 @@
-from recipes.error import final_error
-from recipes.models import Data
-from recipes.http import post, delete
-from recipes.loggers import *
+# coding=utf-8
+from recipes import http, loggers, models
 import recipes.imanagement as im
 
 
 class MIPuppetMaster(im.IServer):
+    """
+    Class etc
+    """
     def __init__(self, name, repo, cookbook_url):
         """
         Initial parameters
@@ -17,58 +18,64 @@ class MIPuppetMaster(im.IServer):
         self.repo = repo
         self.cookbook_url = cookbook_url
         self.headers = {"Content-Type": "application/json"}
-        self.puppet_master_url = Data.objects.get(key="puppet_master_url")
 
-    def update_master_server(self, request):
+    @property
+    def update_master_server(self):
         """
         Add the software into puppet-master or chef-server
-        @param request: request of the user
         @return: None if all OK or an error on failure
         """
+        puppet_master_url = models.Data.objects.get(key="puppet_master_url")
         if self.repo == 'svn':
             uri = '%s/%s/%s' % (
-                self.puppet_master_url, 'download/svn', self.name)
-            set_info_log("update puppet_master url: " + uri)
+                puppet_master_url, 'download/svn', self.name)
+            loggers.set_info_log("update puppet_master url: " + uri)
         elif self.repo == 'git':
-            uri = u'{0:s}/{1:s}/{2:s}'.format(self.puppet_master_url,
+            uri = u'{0:s}/{1:s}/{2:s}'.format(puppet_master_url,
                                               'download/git', self.name)
-            set_info_log("update puppet_master url: " + uri)
+            loggers.set_info_log("update puppet_master url: " + uri)
         else:
             msg = "The repository is not svn or git. "
-            set_error_log(msg)
-            return final_error(msg, 4, request)
+            loggers.set_error_log(msg)
+            return msg
         payload = "url=" + self.cookbook_url
-        set_info_log("update puppet_master payload: " + payload)
-        response = post(uri, self.headers, payload)
+        loggers.set_info_log("update puppet_master payload: " + payload)
+        response = http.post(uri, self.headers, payload)
         if response.status is not 200:
             msg = "Error downloading the puppet module into the puppet master"
-            set_error_log(str(response.status) + ": "
-                          + msg + ": " + response.read())
-            return final_error(msg, 4, request)
-        set_info_log(str(response.status) +
-                     ": Correctly download the module into the puppet master")
+            loggers.set_error_log(str(response.status) + ": "
+                                  + msg + ": " + response.read())
+            return msg
+        loggers.set_info_log(str(
+            response.status) + ": Correctly download the module into the "
+                               "puppet master")
         return None
 
-    def remove_master_server(self, request):
+    def remove_master_server(self):
         """
         Remove the software from puppet-master or chef-server
-        @param request: request of the user
         @return: None if all OK or an error on failure
         """
-        uri = u'{0:s}/{1:s}/{2:s}'.format(self.puppet_master_url,
+        puppet_master_url = models.Data.objects.get(key="puppet_master_url")
+        uri = u'{0:s}/{1:s}/{2:s}'.format(puppet_master_url,
                                           'delete/module', self.name)
-        response = delete(uri, self.headers)
+        response = http.delete(uri, self.headers)
         if response.status is not 200:
             msg = "Error deleting the puppet module from the puppet master"
-            set_error_log(str(response.status) + ": "
-                          + msg + ": " + response.read())
-            return final_error(msg, 4, request)
-        set_info_log(str(response.status) +
-                     ": Correctly deleting the module from the puppet master")
+            loggers.set_error_log(str(response.status) + ": "
+                                  + msg + ": " + response.read())
+            return msg
+        loggers.set_info_log(
+            str(response.status) + ": Correctly deleting the module from the "
+                                   "puppet master")
         return None
 
 
 class MINode(im.INode):
+    """
+    Class to manage puppet agents
+    """
+
     def __init__(self, name, tenant):
         """
         Initial parameters
@@ -76,7 +83,6 @@ class MINode(im.INode):
         @param tenant: Tenant-id
         """
         self.name = name
-        self.puppet_master_url = Data.objects.get(key="puppet_master_url")
         self.headers = {"Content-Type": "application/json"}
         self.tenant = tenant
 
@@ -85,13 +91,14 @@ class MINode(im.INode):
         Delete the node from chef-server or puppet-master
         @return: None if all OK or an error on failure
         """
-        uri = '%s/%s/%s' % (self.puppet_master_url, 'delete/node', self.name)
-        set_info_log("delete node: puppet_master url: " + uri)
-        response = delete(uri, self.headers)
+        puppet_master_url = models.Data.objects.get(key="puppet_master_url")
+        uri = '%s/%s/%s' % (puppet_master_url, 'delete/node', self.name)
+        loggers.set_info_log("delete node: puppet_master url: " + uri)
+        response = http.delete(uri, self.headers)
         if response.status is not 200:
             msg = "Error deleting node from puppet"
-            set_error_log(str(response.status) + ": "
-                          + msg + ": " + response.read())
+            loggers.set_error_log(str(response.status) + ": "
+                                  + msg + ": " + response.read())
             return "Error"
         return None
 
@@ -101,24 +108,25 @@ class MINode(im.INode):
         @param software: The software
         @return: None if all OK or an error on failure
         """
+        puppet_master_url = models.Data.objects.get(key="puppet_master_url")
         software_name = software[0]
         version = software[1]
-        uri = '%s/%s/%s/%s/%s/%s' % (self.puppet_master_url, 'install',
+        uri = '%s/%s/%s/%s/%s/%s' % (puppet_master_url, 'install',
                                      self.tenant, self.name, software_name,
                                      version)
-        set_info_log(uri)
-        response = post(uri, self.headers, None)
+        loggers.set_info_log(uri)
+        response = http.post(uri, self.headers, None)
         if response.status is not 200:
             msg = "Error adding the software to puppet"
-            set_error_log(str(response.status) + ": "
-                          + msg + ": " + response.read())
+            loggers.set_error_log(str(response.status) + ": "
+                                  + msg + ": " + response.read())
             return "Error"
-        uri = '%s/%s/%s' % (self.puppet_master_url, 'generate', self.name)
-        set_info_log(uri)
-        response = post(uri, self.headers, "")
+        uri = '%s/%s/%s' % (puppet_master_url, 'generate', self.name)
+        loggers.set_info_log(uri)
+        response = http.post(uri, self.headers, "")
         if response.status is not 200:
             msg = "Error adding the software to puppet"
-            set_error_log(str(response.status) + ": "
-                          + msg + ": " + response.read())
+            loggers.set_error_log(str(response.status) + ": "
+                                  + msg + ": " + response.read())
             return "Error"
         return None

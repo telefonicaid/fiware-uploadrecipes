@@ -1,3 +1,4 @@
+# coding=utf-8
 import datetime
 from django.http import HttpResponseNotAllowed
 from recipes.download import *
@@ -7,8 +8,8 @@ from recipes.data_input import *
 from recipes.sdccatalog import *
 from recipes.mpuppet import MIPuppetMaster
 from recipes.error import *
-import xml.etree.ElementTree as TheElementTree
-#Incluir descripcion en los atributos
+from xml.etree.ElementTree import parse
+#Incluir description en los attributes
 
 
 def home(request):
@@ -31,7 +32,7 @@ def home(request):
         #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_chef.xml")
         #"/root/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
         # Parseamos el xml que recibimos para obtener los datos
-        request_parsed = TheElementTree.parse(request)
+        request_parsed = parse(request)
         root = request_parsed.getroot()
         name = get_name(root)
         version = get_version(root)
@@ -82,7 +83,7 @@ def home(request):
             chef_puppet = MIChef(name, cookbook_url)
         elif who == 'pupet':
             chef_puppet = MIPuppetMaster(name, repo, cookbook_url)
-        r = chef_puppet.update_master_server(request)
+        r = chef_puppet.update_master_server
         if r is not None:
             return r
 
@@ -104,7 +105,7 @@ def home(request):
             r = openest.test(request)
             if r is not None:
                 try:
-                    chef_puppet.remove_master_server(request)
+                    chef_puppet.remove_master_server()
                 except Exception:
                     pass
                 return r
