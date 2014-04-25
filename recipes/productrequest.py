@@ -1,8 +1,7 @@
 # coding=utf-8
 from recipes import productrelease
 import xml.etree.ElementTree as EL
-from recipes.kingstion import *
-from recipes import http, loggers
+from recipes import http, loggers, kingstion
 import json
 
 
@@ -14,7 +13,7 @@ class ProductRequest:
         @param tenant: tenant id
         """
         self.tenant = tenant
-        self.sdc_url = get_sdc()
+        self.sdc_url = kingstion.get_sdc()
         self.token = token
         self.products = []
         self.header2 = {'Content-Type': 'application/xml',
@@ -98,13 +97,15 @@ class ProductRequest:
         loggers.set_info_log(my_url)
         product = productrelease.Product(product_name, product_description)
         if attributes is not None:
-            attributes = self.process_attributes(attributes)
-            for att in attributes:
+            attributes_list = productrelease.process_attributes(attributes)
+            for att in attributes_list:
                 product.add_attribute(att)
-        metadatas = self.process_attributes(metadatas)
-        for meta in metadatas:
+        metadatas_list = productrelease.process_attributes(metadatas)
+        for meta in metadatas_list:
             product.add_metadata(meta)
         payload = product.to_product_xml()
+        print(EL.tostring(payload))
+        print(my_url)
         response = http.post(my_url, self.header2, EL.tostring(payload))
         if response.status() is not 200:
             error = 'error to add the product sdc ' + str(response.status())
@@ -113,27 +114,6 @@ class ProductRequest:
         else:
             self.products.append(product)
         return None, product
-
-    @staticmethod
-    def process_attributes(attributes_string):
-        """
-        Processing the attribuetes
-        @param attributes_string: the attributes into a string
-        @return: an attributes list
-        """
-        attributes = []
-        if attributes_string is None:
-            return attributes
-        attr = attributes_string.split(';')
-        for att in attr:
-            a = att.split('=')
-            try:
-                at = a[1].split(',')
-                attribute = productrelease.Attribute(a[0], at[0], at[1])
-            except IndexError:
-                attribute = productrelease.Attribute(a[0], a[1], '')
-            attributes.append(attribute)
-        return attributes
 
 
 class ProductReleaseRequest:
@@ -144,7 +124,7 @@ class ProductReleaseRequest:
         @param token: token
         @param tenant: tenant id
         """
-        self.sdc_url = get_sdc()
+        self.sdc_url = kingstion.get_sdc()
         self.token = token
         self.products = []
         self.header2 = {'Content-Type': 'application/xml',
@@ -181,14 +161,7 @@ class ProductReleaseRequest:
             self.sdc_url, "catalog/product", product_name, "release")
         product_release = productrelease.ProductRelease(product, version)
         payload = product_release.to_product_xml()
-        print(1)
-        print(payload)
-        print(2)
-        print(EL.tostring(payload))
-        print(3)
         response = http.post(my_url, self.header2, EL.tostring(payload))
-        print(3)
-        print(response)
         if response.status() != 200:
             return (
                 'Error to add the product release to sdc ' + str(

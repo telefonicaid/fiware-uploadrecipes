@@ -5,11 +5,11 @@ from recipes.download import *
 from recipes.mchef import MIChef
 from recipes.openstack import OpenstackActions
 from recipes.data_input import *
-from recipes.sdccatalog import *
+from recipes.sdc import *
 from recipes.mpuppet import MIPuppetMaster
 from recipes.error import *
+from recipes.kingstion import *
 from xml.etree.ElementTree import parse
-#Incluir description en los attributes
 
 
 def home(request):
@@ -27,7 +27,7 @@ def home(request):
 
     if request.method == 'POST':
         set_info_log(request.method + " request in home")
-        #request_parsed = TheElementTree.parse(
+        #request_parsed = parse(
         #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
         #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_chef.xml")
         #"/root/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
@@ -41,7 +41,7 @@ def home(request):
         dependencies, depends_string = get_dependencies(root)
         sos = get_sos(root)
         who, chef_manager, pupet = get_manager(root)
-        svn, git, repo = get_repository(root)
+        svn, git_repo, repo = get_repository(root)
         tcp = get_ports(root, "tcp_ports")
         udp = get_ports(root, "udp_ports")
         attr = get_attr(root)
@@ -53,15 +53,16 @@ def home(request):
         if attr != "":
             catalog.set_attributes(attr)
         ##1.Descargamos el Cookbook
+
         set_debug_log("Antes del GET COOKBOOK")
-        r = cookbook.get_cookbook(request)
+        r = cookbook.get_cookbook()
         if r is not None:
             set_error_log("Error downloading the cookbook from the repository")
             return r
         set_debug_log("Correctly download the software from repository")
 
         ##2.Check the install
-        r = cookbook.check_cookbook(request)
+        r = cookbook.check_cookbook()
         if r is not None:
             try:
                 set_error_log("Error checking the cookbook")
@@ -102,15 +103,16 @@ def home(request):
                 vm_name = get_image(so) + hour
             #Realizamos las operaciones de despliegue etc
             openest = OpenstackActions(vm_name, so, name, version, who, token)
-            r = openest.test(request)
+            r = openest.test()
             if r is not None:
                 try:
                     chef_puppet.remove_master_server()
                 except Exception:
                     pass
                 return r
+
         #5. Add the product to the SDC Catalog
-        r = catalog.add_catalog(request)
+        r = catalog.add_catalog()
         if r is not None:
             try:
                 set_error_log("Error adding the catalog to the SDC")
