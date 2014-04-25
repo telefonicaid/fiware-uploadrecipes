@@ -1,8 +1,7 @@
 # coding=utf-8
 from mockito import *
 from django.test import TestCase
-from recipes import mchef, loggers, http
-from recipes.models import Data
+from recipes import mchef, loggers
 import os
 
 

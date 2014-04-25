@@ -59,6 +59,8 @@ Prepare the server
         pip install PyChef
         apt-get install python-paramkio
 
+6. In the properties.txt file you have
+
 To run the server
 -----------------
     python manage.py runserver 0.0.0.0:8000 &
