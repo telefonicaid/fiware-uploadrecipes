@@ -26,7 +26,7 @@ def home(request):
         set_error_log(request.method + ": Status -> 403. Method not allowed.")
         HttpResponseNotAllowed("Methods are GET or POST")
 
-    if request.method == 'GET':
+    if request.method == 'POST':
         set_info_log(request.method + " request in home")
         #request_parsed = parse(
         #"/Users/beatriz.munoz/xifi-uploadrecipes/recipes/xmltest_puppet.xml")
@@ -47,7 +47,6 @@ def home(request):
         udp = get_ports(root, "udp_ports")
         attr = get_attr(root)
         token = get_token_request(request)
-        #token = "d53ebc806fae4c74af0f0958729d862b"
         cookbook = Download(cookbook_url, repo, name, version, who)
         catalog = Catalog(name, version, desc, token)
         catalog.get_metadata(who, cookbook_url, sos, depends_string,
