@@ -12,6 +12,26 @@ class Attribute:
         self.value = att_value
         self.description = att_desc
 
+def process_attributes(attributes_string):
+    """
+    Processing the attributes
+    @param attributes_string: the attributes into a string
+    @return: an attributes list
+    """
+    attributes = []
+    if attributes_string is None:
+        return attributes
+    attr = attributes_string.split(';')
+    for att in attr:
+        a = att.split('=')
+        try:
+            at = a[1].split(',')
+            attribute = Attribute(a[0], at[0], at[1])
+        except IndexError:
+            attribute = Attribute(a[0], a[1], '')
+        attributes.append(attribute)
+    return attributes
+
 
 class Product:
 

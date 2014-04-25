@@ -45,3 +45,12 @@ class ProductTest(TestCase):
         result = self.product.to_product_xml()
         self.assertEqual(xml_result, tostring(result))
 
+    def test_to_product_xml_no_attributes(self):
+        self.product.add_metadata(self.metadata)
+        xml_result = "<product><name>name</name><description>description" \
+                     "</description><metadatas><key>key</key><value>value" \
+                     "</value></metadatas></product>"
+        result = self.product.to_product_xml()
+        self.assertEqual(xml_result, tostring(result))
+
+

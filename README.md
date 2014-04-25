@@ -63,3 +63,11 @@ To run the server
 -----------------
     python manage.py runserver 0.0.0.0:8000 &
 
+    Actualmente la maquina esta en el portal de la 61, en el tenant tidcloud.
+    Usuario propietario beatriz.munoz, y con IP 130.206.81.66.
+
+    Las peticiones por tanto se realizar'an a la direcci'on:
+    http://130.206.81.66:8000/
+
+    Se utiliza autenticaci'on con cabeceras (con en el resto de casos)
+

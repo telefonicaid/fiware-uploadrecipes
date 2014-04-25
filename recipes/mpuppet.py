@@ -19,7 +19,6 @@ class MIPuppetMaster(im.IServer):
         self.cookbook_url = cookbook_url
         self.headers = {"Content-Type": "application/json"}
 
-    @property
     def update_master_server(self):
         """
         Add the software into puppet-master or chef-server
@@ -41,7 +40,7 @@ class MIPuppetMaster(im.IServer):
         payload = "url=" + self.cookbook_url
         loggers.set_info_log("update puppet_master payload: " + payload)
         response = http.post(uri, self.headers, payload)
-        if response.status is not 200:
+        if response.status() is not 200:
             msg = "Error downloading the puppet module into the puppet master"
             loggers.set_error_log(str(response.status) + ": "
                                   + msg + ": " + response.read())
@@ -60,7 +59,7 @@ class MIPuppetMaster(im.IServer):
         uri = u'{0:s}/{1:s}/{2:s}'.format(puppet_master_url,
                                           'delete/module', self.name)
         response = http.delete(uri, self.headers)
-        if response.status is not 200:
+        if response.status() != 200:
             msg = "Error deleting the puppet module from the puppet master"
             loggers.set_error_log(str(response.status) + ": "
                                   + msg + ": " + response.read())
@@ -95,7 +94,7 @@ class MINode(im.INode):
         uri = '%s/%s/%s' % (puppet_master_url, 'delete/node', self.name)
         loggers.set_info_log("delete node: puppet_master url: " + uri)
         response = http.delete(uri, self.headers)
-        if response.status is not 200:
+        if response.status() != 200:
             msg = "Error deleting node from puppet"
             loggers.set_error_log(str(response.status) + ": "
                                   + msg + ": " + response.read())
@@ -116,7 +115,7 @@ class MINode(im.INode):
                                      version)
         loggers.set_info_log(uri)
         response = http.post(uri, self.headers, None)
-        if response.status is not 200:
+        if response.status() != 200:
             msg = "Error adding the software to puppet"
             loggers.set_error_log(str(response.status) + ": "
                                   + msg + ": " + response.read())
@@ -124,7 +123,7 @@ class MINode(im.INode):
         uri = '%s/%s/%s' % (puppet_master_url, 'generate', self.name)
         loggers.set_info_log(uri)
         response = http.post(uri, self.headers, "")
-        if response.status is not 200:
+        if response.status() != 200:
             msg = "Error adding the software to puppet"
             loggers.set_error_log(str(response.status) + ": "
                                   + msg + ": " + response.read())

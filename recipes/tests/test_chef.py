@@ -58,11 +58,13 @@ class MINodeTest(TestCase):
         self.assertIsNotNone(result)
 
     def test_add_node_run_list(self):
+        software = 'GE_Software'
         when(os).system(any()).thenReturn(0)
-        result = self.chef.delete_node_client()
+        result = self.chef.add_node_run_list(software)
         self.assertIsNone(result)
 
     def test_add_node_run_list_no_200(self):
+        software = 'GE_Software'
         when(os).system(any()).thenReturn(1)
-        result = self.chef.delete_node_client()
+        result = self.chef.add_node_run_list(software)
         self.assertIsNotNone(result)

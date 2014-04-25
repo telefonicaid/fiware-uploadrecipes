@@ -3,8 +3,9 @@ from django.test import TestCase
 from recipes.productrequest import *
 from recipes import kingstion, loggers, productrelease
 from mockito import *
+from mock import MagicMock
 import json
-import xml.etree.ElementTree as EL
+import xml.etree.ElementTree
 
 
 class ProductRequestTest(TestCase):
@@ -59,7 +60,8 @@ class ProductRequestTest(TestCase):
              "attributes": [{"key": "wikiname", "value": "Wiki to be shown",
                              "description": "The name of the wiki"},
                             {"key": "path", "value": "/demo",
-                             "description": "The url context to be displayed"}],
+                             "description":
+                                 "The url context to be displayed"}],
              "metadatas": {"key": "installator", "value": "chef",
                            "description": "ChefServer Recipe required"}},
             {"name": "beatest", "description": "Last test of server TESTER",
@@ -68,7 +70,9 @@ class ProductRequestTest(TestCase):
              "metadatas": [{"key": "image",
                             "value": "12c2726c-17b5-401f-9dc7-48a351a8fc64"},
                            {"key": "cookbook_url",
-                            "value": "https://forge.fi-ware.org/scmrepos/svn/testbed/trunk/cookbooks/GESoftware/beatest/"},
+                            "value":
+                                "https://forge.fi-ware.org/scmrepos/svn/"
+                                "testbed/trunk/cookbooks/GESoftware/beatest/"},
                            {"key": "cloud", "value": "yes"},
                            {"key": "installator", "value": "chef"},
                            {"key": "open_ports", "value": "22 port1 port2"},
@@ -99,7 +103,8 @@ class ProductRequestTest(TestCase):
                                       {"key": "repository", "value": "svn"},
                                       {"key": "public", "value": "no"},
                                       {"key": "tenant_id",
-                                       "value": "376f0169d04b4a66a1af147ef33073ae"},
+                                       "value":
+                                           "376f0169d04b4a66a1af147ef33073ae"},
                                       {"key": "dependencies", "value": "git"}]}
         self.token = "token"
         self.tenant = "tenantId"
@@ -116,13 +121,13 @@ class ProductRequestTest(TestCase):
         response_delete_with = mock()
         when(ProductReleaseRequest).get_product_release(self.name).thenReturn(
             self.version)
-        when(ProductReleaseRequest).delete_product_release(self.name,
-                                                           self.version).thenReturn(
-            None)
+        when(ProductReleaseRequest). \
+            delete_product_release(self.name, self.version).thenReturn(None)
         when(http).delete(any(), self.product_request.header).thenReturn(
             response_delete_with)
         when(response_delete_with).status().thenReturn(200)
         result = self.product_request.delete_product(self.name)
+        self.assertIsNone(result)
         self.assertEqual(result, None)
 
     def test_delete_product_without_version(self):
@@ -131,9 +136,8 @@ class ProductRequestTest(TestCase):
             self.version)
         when(http).delete(any(), self.product_request.header).thenReturn(
             response_delete)
-        when(ProductReleaseRequest).delete_product_release(self.name,
-                                                           self.version).thenReturn(
-            None)
+        when(ProductReleaseRequest). \
+            delete_product_release(self.name, self.version).thenReturn(None)
         when(response_delete).status().thenReturn(200)
         result = self.product_request.delete_product(self.name)
         self.assertEqual(result, None)
@@ -160,40 +164,108 @@ class ProductRequestTest(TestCase):
         result = self.product_request.get_product_info(self.name)
         self.assertEqual(result, "Last test of server TESTER")
 
+    def test_add_product(self):
+        response_add = mock()
+        product_mocked = mock()
+        attributes = mock()
+        attributes_list = MagicMock()
+        metadatas = mock()
+        metadatas_list = MagicMock()
+        payload = mock()
+        paylaod_string = mock()
+        when(productrelease).Product(self.name, "description").thenReturn(
+            product_mocked)
+        when(productrelease).process_attributes(attributes).thenReturn(
+            iter(attributes_list))
+        when(product_mocked).add_attribute(any()).thenReturn(None)
+        when(productrelease).process_attributes(metadatas).thenReturn(
+            iter(metadatas_list))
+        when(product_mocked).add_metadata(any()).thenReturn(None)
+        when(product_mocked).to_product_xml().thenReturn(payload)
+        when(xml.etree.ElementTree).tostring(payload). \
+            thenReturn(paylaod_string)
+        when(http).post(any(), self.product_request.header2, any()).thenReturn(
+            response_add)
+        when(response_add).status().thenReturn(200)
+        result_error, product = self.product_request.add_product(self.name,
+                                                                 "description",
+                                                                 attributes,
+                                                                 metadatas)
+        self.assertIsNone(result_error)
+        self.assertIsNotNone(product)
+
+
+class Attributes(TestCase):
+    def test_process_attributes_description(self):
+        attributes_string = "key=value,description"
+        attribute = ["key", "value", "description"]
+        when(productrelease).Attribute(any(), any(), any()).thenReturn(
+            attribute)
+        result = productrelease.process_attributes(attributes_string)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(len(result[0]), 3)
+
+    def test_process_attributes_no_attribute(self):
+        attributes_string = None
+        attribute = mock()
+        when(productrelease).Attribute(any(), any(), any()).thenReturn(
+            attribute)
+        result = productrelease.process_attributes(attributes_string)
+        self.assertEqual(len(result), 0)
+        self.assertEqual(result, [])
+
+    def test_process_attributes_no_description(self):
+        attributes_string = "key=value,description"
+        attribute = mock()
+        when(productrelease).Attribute(any(), any(), any()).thenReturn(
+            attribute)
+        result = productrelease.process_attributes(attributes_string)
+        self.assertEqual(len(result), 1)
+
 
 class ProductRequestReleaseTest(TestCase):
     def setUp(self):
-        self.product = {"productRelease": {"version": "2.4.10",
-                                           "product": {"name": "beatest",
-                                                       "description": "Last test of server TESTER",
-                                                       "attributes": [
-                                                           {"key": "name1",
-                                                            "value": "value1"},
-                                                           {"key": "name2",
-                                                            "value": "value2"}],
-                                                       "metadatas": [
-                                                           {"key": "image",
-                                                            "value": "12c2726c-17b5-401f-9dc7-48a351a8fc64"},
-                                                           {
-                                                               "key": "cookbook_url",
-                                                               "value": "https://forge.fi-ware.org/scmrepos/svn/testbed/trunk/cookbooks/GESoftware/beatest/"},
-                                                           {"key": "cloud",
-                                                            "value": "yes"}, {
-                                                               "key": "installator",
-                                                               "value": "chef"},
-                                                           {
-                                                               "key": "open_ports",
-                                                               "value": "22 port1 port2"},
-                                                           {
-                                                               "key": "repository",
-                                                               "value": "svn"},
-                                                           {"key": "public",
-                                                            "value": "no"},
-                                                           {"key": "tenant_id",
-                                                            "value": "376f0169d04b4a66a1af147ef33073ae"},
-                                                           {
-                                                               "key": "dependencies",
-                                                               "value": "git"}]}}}
+        self.product = {"productRelease":
+                            {"version": "2.4.10",
+                             "product": {"name": "beatest",
+                                         "description":
+                                             "Last test of server TESTER",
+                                         "attributes": [
+                                             {"key": "name1",
+                                              "value": "value1"},
+                                             {"key": "name2",
+                                              "value": "value2"}],
+                                         "metadatas": [
+                                             {"key": "image",
+                                              "value":
+                                                  "12c2726c-17b5-401f-9dc7-"
+                                                  "48a351a8fc64"},
+                                             {
+                                                 "key": "cookbook_url",
+                                                 "value":
+                                                     "https://forge.fi-ware."
+                                                     "org/scmrepos/svn/testbed"
+                                                     "/trunk/cookbooks/"
+                                                     "GESoftware/beatest/"},
+                                             {"key": "cloud",
+                                              "value": "yes"}, {
+                                                 "key": "installator",
+                                                 "value": "chef"},
+                                             {
+                                                 "key": "open_ports",
+                                                 "value": "22 port1 port2"},
+                                             {
+                                                 "key": "repository",
+                                                 "value": "svn"},
+                                             {"key": "public",
+                                              "value": "no"},
+                                             {"key": "tenant_id",
+                                              "value":
+                                                  "376f0169d04b4a6"
+                                                  "6a1af147ef33073ae"},
+                                             {
+                                                 "key": "dependencies",
+                                                 "value": "git"}]}}}
         self.token = "token"
         self.tenant = "tenantId"
         self.name = "beatest"
@@ -229,13 +301,13 @@ class ProductRequestReleaseTest(TestCase):
     def test_delete_product_release(self):
         response_delete = mock()
         when(http).delete(
-            any(),self.product_request_release.header).\
+            any(), self.product_request_release.header). \
             thenReturn(response_delete)
-        when(ProductReleaseRequest).\
-            delete_product_release(self.name,self.version).thenReturn(None)
+        when(ProductReleaseRequest). \
+            delete_product_release(self.name, self.version).thenReturn(None)
         when(response_delete).status().thenReturn(200)
-        result = self.product_request_release.\
-            delete_product_release(self.name,self.version)
+        result = self.product_request_release. \
+            delete_product_release(self.name, self.version)
         self.assertEqual(result, None)
 
     def test_add_product_release(self):
@@ -246,31 +318,13 @@ class ProductRequestReleaseTest(TestCase):
         when(productrelease).ProductRelease(product, self.version).thenReturn(
             product_mocked)
         when(product_mocked).to_product_xml().thenReturn(payload)
-        when(EL).tostring(payload).thenReturn(paylaod_string)
+        when(xml.etree.ElementTree).tostring(payload).thenReturn(
+            paylaod_string)
         response_add = mock()
-        when(http).post(any(), self.product_request_release.header2, any()).thenReturn(response_add)
-        self.product_request_release.add_product_release(product, self.name, self.version)
-
-
-'''
-    def add_product_release(self, product, product_name, version):
-        """
-        Add a product release to the SDC
-        @param product: A product into SDC
-        @param product_name: The name of the product
-        @param version: the version of the release
-        @return: None if all OK / an error on failure
-        """
-        my_url = "%s/%s/%s/%s" % (
-            self.sdc_url, "catalog/product", product_name, "release")
-        product_release = productrelease.productrelease(product, version)
-        payload = product_release.to_product_xml()
-        response = http.post(my_url, self.header2, tostring(payload))
-        if response.status() != 200:
-            return (
-                'Error to add the product release to sdc ' + str(
-                    response.status()))
-        else:
-            self.products.append(product)
-        return None
-'''
+        when(http).post(any(), self.product_request_release.header2,
+                        any()).thenReturn(response_add)
+        when(response_add).status().thenReturn(200)
+        result_add = self. \
+            product_request_release. \
+            add_product_release(product, self.name, self.version)
+        self.assertEqual(result_add, None)
