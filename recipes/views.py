@@ -10,7 +10,6 @@ from recipes.mpuppet import MIPuppetMaster
 from recipes.error import *
 from recipes.kingstion import *
 from xml.etree.ElementTree import parse
-#Incluir description en los attributes
 
 
 def home(request):
