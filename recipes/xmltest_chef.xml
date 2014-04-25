@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<recipe>
+	<name>beatest</name>
+	<version>2.4.10</version>
+	<repository>svn</repository>
+	<url>https://forge.fi-ware.org/scmrepos/svn/testbed/trunk/cookbooks/GESoftware/beatest/</url>
+	<config_management>chef</config_management>
+	<description>Last test of server TESTER</description>
+	<sos>12c2726c-17b5-401f-9dc7-48a351a8fc64</sos>
+	<attr>
+		<attribute>name1</attribute>
+		<value>value1</value>
+		<description>description1</description>
+	</attr>
+	<attr>
+		<attribute>name2</attribute>
+		<value>value2</value>
+		<description>description2</description>
+	</attr>
+	<tcp_ports>port1</tcp_ports>
+	<udp_ports>port2</udp_ports>
+	<dependencies>
+		<name>git</name>
+		<version>1.7</version>
+	</dependencies>
+</recipe>
