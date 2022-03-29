@@ -18,7 +18,7 @@ djangorestframework==3.11.2
 mockito==0.5.2
 pika==0.9.13
 PyChef==0.2.3
-paramiko==2.0.9
+paramiko==2.10.1
 GitPython
 #pysvn
 #git
