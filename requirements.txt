@@ -18,6 +18,8 @@ djangorestframework==3.11.2
 mockito==0.5.2
 pika==0.9.13
 PyChef==0.2.3
+# Blinly update from paramiko 2.0.9 to avoid github security alert. Not sure if the code will work as is
+# after the upgrade but probably this repository is no longer used and it is not a big issue ;)
 paramiko==2.10.1
 GitPython
 #pysvn
