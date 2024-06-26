@@ -14,7 +14,7 @@ django-nose==1.2
 coverage==3.7
 # Blinly update from djangorestframework 2.3.8 to avoid github security alert. Not sure if the code will work as is
 # after the upgrade but probably this repository is no longer used and it is not a big issue ;)
-djangorestframework==3.11.2
+djangorestframework==3.15.2
 mockito==0.5.2
 pika==0.9.13
 PyChef==0.2.3
