@@ -8,7 +8,7 @@ mock
 
 # Blinly update from django 1.5.5 to avoid github security alert. Not sure if the code will work as is
 # after the upgrade but probably this repository is no longer used and it is not a big issue ;)
-django==4.2.16
+django==4.2.17
 nose==1.3.0
 django-nose==1.2
 coverage==3.7
